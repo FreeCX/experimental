@@ -60,12 +60,15 @@ int list_load( char *name, list_t *lst )
 	while ( !feof( f ) ) {
 		l = malloc( sizeof(list_t) );
 		assert( l );
-		memset( l, 0, sizeof(list_t) );
-		fgets( buffer, MAX_STR, f );
-		list_parser( buffer, l );
-		l->next = a;
-		a = l;
-		list_count++;
+		memset( buffer, 0, MAX_STR * sizeof(char) );
+		if ( fgets( buffer, MAX_STR, f ) != NULL ) {
+			list_parser( buffer, l );
+			l->next = a;
+			a = l;
+			list_count++;
+		} else {
+			free( l );
+		}
 	}
 	fclose( f );
 	*lst = *a;
@@ -215,7 +218,7 @@ int list_html_out( char *file, list_t *lst )
 		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">"
 		"<title>Список аниме</title></head><body>\n";
 	char html_end[] = "</body></html>";
-	list_t *a = lst->next;
+	list_t *a = lst;
 	FILE *f;
 	int i = 0;
 
