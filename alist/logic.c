@@ -78,12 +78,13 @@ int list_load( char *name, list_t *lst )
 int list_save( char *name, list_t *lst )
 {
 	FILE *f;
-	list_t *l = lst;
+	list_t *a = lst, *l;
 
 	f = fopen( name, "w" );
 	if ( f == NULL ) {
 		return EXIT_FAILURE;
 	}
+	l = list_reverse( a );
 	while ( l != NULL ) {
 		fprintf( f, list_format, l->org_name, l->rus_name, l->status, l->series );
 		l = l->next;
@@ -241,4 +242,18 @@ int list_html_out( char *file, list_t *lst )
 	fprintf( f, "%s", html_end );
 	fclose( f );
 	return EXIT_SUCCESS;
+}
+
+list_t *list_reverse( list_t *lst )
+{
+	list_t *curr = lst, *next;
+	lst = NULL;
+
+	while ( curr != NULL ) {
+		next = curr->next;
+		curr->next = lst;
+		lst = curr;
+		curr = next;
+	}
+	return lst;
 }

@@ -34,5 +34,6 @@ char *list_status( char status );
 int list_print( list_t *lst );
 void list_clean( list_t *lst );
 int list_html_out( char *name, list_t *lst );
+list_t *list_reverse( list_t *lst );
 	
 #endif
