@@ -1,10 +1,11 @@
 #include "logic.h"
 
-list_t base;
+list_t *base = NULL;
 
 int main( int argc, char *argv[] )
 {
-	list_load( "anime-list", &base );
-	list_print( &base );
+	base = list_load( "anime-list" );
+	list_print( base );
+	free( base );
 	return EXIT_SUCCESS;
 }
