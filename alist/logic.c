@@ -92,13 +92,12 @@ int list_save( char *name, list_t *lst )
 	return EXIT_SUCCESS;
 }
 
-int list_copy( list_t *a, list_t *b )
+void list_copy( list_t *a, list_t *b )
 {
 	strcpy( a->org_name, b->org_name );
 	strcpy( a->rus_name, b->rus_name );
 	a->status = b->status;
 	a->series = b->series;
-	return EXIT_SUCCESS;
 }
 
 list_t *list_append( list_t *a, list_t *b )
@@ -213,40 +212,6 @@ void list_clean( list_t *lst )
         c = c->next;
         count++;
     }
-}
-
-int list_html_out( char *file, list_t *lst )
-{
-	char out_format_01[] = "%04d: %s / %s [ %s ]\n<br>";
-	char out_format_02[] = "%04d: %s / %s [ %s ][ Cерия %d ]\n<br>";
-	char html_header[] = 
-		"<html><head>"
-		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">"
-		"<title>Список аниме</title></head><body>\n";
-	char html_end[] = "</body></html>";
-	list_t *a = lst;
-	FILE *f;
-	int i = 0;
-
-	f = fopen( file, "w" );
-	if ( f == NULL ) {
-		return EXIT_FAILURE;
-	}
-	fprintf( f, "%s", html_header );
-	while ( a != NULL ) {
-		i++;
-		if ( a->series == 0 ) {
-			fprintf( f, out_format_01, i, a->org_name, a->rus_name, 
-				list_status( a->status ) );
-		} else {
-			fprintf( f, out_format_02, i, a->org_name, a->rus_name, 
-				list_status( a->status ), a->series );
-		}
-		a = a->next;
-	}
-	fprintf( f, "%s", html_end );
-	fclose( f );
-	return EXIT_SUCCESS;
 }
 
 list_t *list_reverse( list_t *lst )
