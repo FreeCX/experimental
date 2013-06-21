@@ -40,7 +40,7 @@ void list_parser( char str[], list_t *lst )
 	a->series = atoi( buffer );
 }
 
-int list_load( char *name, list_t *lst )
+list_t *list_load( char *name )
 {
 	FILE *f;
 	char org_name[MAX_STR];
@@ -49,13 +49,13 @@ int list_load( char *name, list_t *lst )
 	char status, buffer[MAX_STR];
 	list_t *l, *a = NULL;
 	
+	list_count = 0;
 	if ( a != NULL ) {
-		list_count = 0;
 		list_clean( a );
 	}
 	f = fopen( name, "r" );
 	if ( f == NULL ) {
-		return EXIT_FAILURE;
+		return NULL;
 	}
 	while ( !feof( f ) ) {
 		l = malloc( sizeof(list_t) );
@@ -65,14 +65,13 @@ int list_load( char *name, list_t *lst )
 			list_parser( buffer, l );
 			l->next = a;
 			a = l;
-			list_count++;
+			a->index = list_count++;
 		} else {
 			free( l );
 		}
 	}
 	fclose( f );
-	*lst = *a;
-	return EXIT_SUCCESS;
+	return a;
 }
 
 int list_save( char *name, list_t *lst )
@@ -102,10 +101,10 @@ int list_copy( list_t *a, list_t *b )
 	return EXIT_SUCCESS;
 }
 
-int list_append( list_t *a, list_t *b )
+list_t *list_append( list_t *a, list_t *b )
 {
-	list_t *l1 = a, *l2 = b, *l3;
-	while ( ( l1 = l1->next ) != NULL );
+	list_t *l1 = a, *l2 = b, *l3 = NULL;
+
 	while ( l2 != NULL ) {
 		l3 = malloc( sizeof(list_t) );
 		assert( l3 );
@@ -113,13 +112,13 @@ int list_append( list_t *a, list_t *b )
 		l3->org_name = malloc( strlen(l2->org_name) * sizeof(char) );
 		l3->rus_name = malloc( strlen(l2->rus_name) * sizeof(char) );
 		list_copy( l3, l2 );
-		list_print( l3 );
+		l3->index = l1->index + 1;
 		l3->next = l1;
 		l1 = l3;
 		l2 = l2->next;
 	}
-	*a = *l1;
-	return EXIT_SUCCESS;
+	list_count = l1->index;
+	return l1;
 }
 
 list_t *list_search_by_name( list_t *lst, char *search )
@@ -189,6 +188,8 @@ int list_print( list_t *lst )
 	list_t *a = lst;
 
 	while ( a != NULL ) {
+		printf( "index: %u\n", a->index );
+		printf( "next:  %p\n", a->next );
 		if ( a->series == 0 ) {
 			printf( text_mini, a->org_name, a->rus_name, list_status( a->status ) );
 		} else {
@@ -202,11 +203,15 @@ int list_print( list_t *lst )
 void list_clean( list_t *lst )
 {
 	list_t *c = lst;
+	int count = 0;
+
     while ( c != NULL ) {
+    	printf( "cound: %d\n", count );
         free( c->org_name );
         free( c->rus_name );
         free( c );
         c = c->next;
+        count++;
     }
 }
 
