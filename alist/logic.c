@@ -120,38 +120,64 @@ list_t *list_append( list_t *a, list_t *b )
 	return l1;
 }
 
-list_t *list_search_by_name( list_t *lst, char *search )
+elem_t *list_search_by_name( list_t *lst, char *search )
 {
-	list_t *a = lst, *b, *c;
+	list_t *a = lst;
+	elem_t *b, *e = NULL;
 
 	while ( a != NULL ) {
 		if ( strstr( a->org_name, search ) || strstr( a->rus_name, search ) ) {
-			b = malloc( sizeof(list_t) );
+			b = malloc( sizeof(elem_t) );
 			assert( b );
-			memset( b, 0, sizeof(list_t) );
-			b->org_name = a->org_name;
-			b->rus_name = a->rus_name;
-			b->status = a->status;
-			b->series = a->series;
-			b->next = c;
-			c = b;
+			memset( b, 0, sizeof(elem_t) );
+			b->index = a->index;
+			b->next = e;
+			e = b;
 		}
 		a = a->next;
 	}
-	c->next = NULL;
-	return c;
+	e->next = NULL;
+	return e;
 }
 
-list_t *list_search_by_status( list_t *lst, char status )
+elem_t *list_search_by_status( list_t *lst, char status )
 {
 	list_t *a = lst;
-	return a;
+	elem_t *b, *e = NULL;
+
+	while ( a != NULL ) {
+		if ( a->status == status ) {
+			b = malloc( sizeof(elem_t) );
+			assert( b );
+			memset( b, 0, sizeof(elem_t) );
+			b->index = a->index;
+			b->next = e;
+			e = b;
+		}
+		a = a->next;
+	}
+	e->next = NULL;
+	return e;
 }
 
-list_t *list_search_by_series( list_t *lst, int series )
+elem_t *list_search_by_series( list_t *lst, int series )
 {
 	list_t *a = lst;
-	return a;
+	elem_t *b, *e = NULL;
+
+	while ( a != NULL ) {
+		if ( a->series == series ) {
+			b = malloc( sizeof(elem_t) );
+			assert( b );
+			memset( b, 0, sizeof(elem_t) );
+			b->index = a->index;
+			b->next = e;
+			e = b;
+		}
+		a = a->next;
+	}
+	e->next = NULL;
+	return e;
 }
 
 char *list_status( char stat )
