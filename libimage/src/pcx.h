@@ -23,7 +23,7 @@ struct pcx_fmt {
 typedef struct pcx_fmt pcx_fmt_t;
 
 void pcx_info( pcx_fmt_t *h );
-uint8 * pcx_load( FILE *f );
-void pcx_save( FILE *f, uint8 *data );
+int8 pcx_load( FILE *f, image_t *img );
+int8 pcx_save( FILE *f, image_t *img );
 
 #endif

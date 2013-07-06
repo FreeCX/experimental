@@ -22,6 +22,16 @@ typedef unsigned int uint32;		// size = 4
 	typedef unsigned __int64 uint64;
 #endif								// size = 8
 
+#define STATUS_SUCCESS				0
+#define STATUS_FAILED				1
+
+struct image {
+	uint8 *data;
+	uint8 bpp;
+	uint32 width, height;
+};
+typedef struct image image_t;
+
 static inline uint16 bswap16( uint16 input );
 static inline uint32 bswap32( uint32 input );
 static inline uint64 bswap64( uint64 input );
