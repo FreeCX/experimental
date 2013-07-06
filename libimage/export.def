@@ -1,0 +1,4 @@
+EXPORTS
+	pcx_info		@1
+	pcx_load		@2
+	pcx_save		@3
