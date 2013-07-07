@@ -41,10 +41,41 @@ void pcx_info( pcx_fmt_t *h )
 int8 pcx_load( FILE *f, image_t *img )
 {
 	pcx_fmt_t h;
+	uint32 xsize, ysize, total_bytes;
+	uint8 *buffer, *data, count;
+	int i = 0, j, n = 0;
 
 	memset( &h, 0, sizeof(pcx_fmt_t) );
 	fread( &h, 1, sizeof(pcx_fmt_t), f );
 	pcx_info( &h );
+	xsize = h.window[2] - h.window[0] + 1;
+	ysize = h.window[3] - h.window[1] + 1;
+	total_bytes = h.nplanes * h.bpl;
+	/*
+	buffer = (uint8 *) malloc( total_bytes * ysize * sizeof(uint8) );
+	fread( buffer, 1, total_bytes * ysize * sizeof(uint8), f );
+	data = (uint8 *) malloc( xsize * ysize * h.nplanes * sizeof(uint8) );
+	img->bpp = h.bpp;
+	img->width = xsize;
+	img->height = ysize;
+	while ( i < total_bytes ) {
+		// 2 high bytes == 11
+		if ( buffer[i] >> 8 == 12 ) {
+			// get last 6 bytes
+			count = buffer[i] & 0x3F;
+			for ( j = 0; j < count; j++ ) {
+				data[n+j] = buffer[i+1];
+				printf( "%x", data[n+j] );
+			}
+			n += count;
+		} else {
+			data[n] = buffer[i];
+			printf( "%x", data[n] );
+		}
+		n++; i++;
+	}
+	img->data = data;
+	*/
 	return STATUS_SUCCESS;
 }
 

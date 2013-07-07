@@ -1,13 +1,13 @@
 #include "data.h"
 
 #ifdef ARCH_X86
-static inline uint16 bswap16( uint16 input )
+inline uint16 bswap16( uint16 input )
 {
 	__asm( "xchgb %b0, %h0" : "=q" ( input ) : "0" ( input ) );
     return input;
 }
 
-static inline uint32 bswap32( uint32 input )
+inline uint32 bswap32( uint32 input )
 {
 #if __CPU__ > 386
 	__asm( "bswap %0" : "=r" ( input ) :
@@ -22,7 +22,7 @@ static inline uint32 bswap32( uint32 input )
 	return input;
 }
 
-static inline uint64 bswap64( uint64 input )
+inline uint64 bswap64( uint64 input )
 {
 	union { 
         uint64 ll;
@@ -39,18 +39,18 @@ static inline uint64 bswap64( uint64 input )
 	return w.ll;
 }
 #else
-static inline uint16 bswap16( uint16 input )
+inline uint16 bswap16( uint16 input )
 {
 	return ( ( input & 0xFF ) << 8 ) | ( input >> 8 );
 }
 
-static inline uint32 bswap32( uint32 input )
+inline uint32 bswap32( uint32 input )
 {
 	return ( ( input & 0xFF ) << 24 ) | ( ( input & 0xFF00 ) << 8 ) |
 		( ( input & 0xFF0000 ) >> 8 ) | ( input >> 24 );
 }
 
-static inline uint64 bswap64( uint64 input )
+inline uint64 bswap64( uint64 input )
 {
 	union { 
         uint64 ll;
@@ -63,3 +63,14 @@ static inline uint64 bswap64( uint64 input )
     return r.ll;
 }
 #endif
+
+inline size_t fsize( FILE *f )
+{
+	size_t pos = ftell( f );
+	size_t size;
+
+	fseek( f, 0, SEEK_END );
+	size = ftell( f );
+	fseek( f, pos, SEEK_SET );
+	return size;
+}
