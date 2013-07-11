@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "../src/pcx.h"
+#include "../src/tga.h"
+#include "../src/bmp.h"
 
 int main( void )
 {
@@ -9,5 +11,13 @@ int main( void )
 	f = fopen( "image.pcx", "r" );
 	pcx_load( f, &img );
 	fclose( f );
+	putchar( '\n' );
+	f = fopen( "image.tga", "r" );
+	tga_load( f, &img );
+	fclose( f );
+    putchar( '\n' );
+    f = fopen( "image.bmp", "r" );
+    bmp_load( f, &img );
+    fclose( f );
 	return 0;
 }

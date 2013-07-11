@@ -2,3 +2,9 @@ EXPORTS
 	pcx_info		@1
 	pcx_load		@2
 	pcx_save		@3
+	tga_info		@4
+	tga_load		@5
+	tga_save		@6
+	bmp_info		@7
+	bmp_load		@8
+	bmp_save		@9
