@@ -20,10 +20,10 @@ char pcx_info_02[] =
 
 void pcx_info( pcx_fmt_t *h )
 {
-	int i;
+	uint8 i;
 
 	printf( pcx_info_01, h->manufacturer, h->version, h->encoding, h->bpp, 
-		h->window[0], h->window[1], h->window[2], h->window[3], h->hdpi,
+		h->window.xmin, h->window.ymin, h->window.xmax, h->window.ymax, h->hdpi,
 		h->vdpi );
 	for ( i = 0; i < 48; i++ ) {
 		printf( "%u", h->colormap[i] );
@@ -43,13 +43,13 @@ int8 pcx_load( FILE *f, image_t *img )
 	pcx_fmt_t h;
 	uint32 xsize, ysize, total_bytes;
 	uint8 *buffer, *data, count;
-	int i = 0, j, n = 0;
+	uint8 i = 0, j, n = 0;
 
 	memset( &h, 0, sizeof(pcx_fmt_t) );
 	fread( &h, 1, sizeof(pcx_fmt_t), f );
 	pcx_info( &h );
-	xsize = h.window[2] - h.window[0] + 1;
-	ysize = h.window[3] - h.window[1] + 1;
+	xsize = h.window.xmax - h.window.xmin + 1;
+	ysize = h.window.ymax - h.window.ymin + 1;
 	total_bytes = h.nplanes * h.bpl;
 	/*
 	buffer = (uint8 *) malloc( total_bytes * ysize * sizeof(uint8) );
@@ -88,8 +88,8 @@ int8 pcx_save( FILE *f, image_t *img )
 	h.version = 5;
 	h.encoding = 1;
 	h.bpp = img->bpp;
-	h.window[2] = img->width - 1;
-	h.window[3] = img->height - 1;
+	h.window.xmax = img->width - 1;
+	h.window.ymax = img->height - 1;
 	h.bpl = img->width;
 	h.pallete_info = 1;
 	/* input code */
