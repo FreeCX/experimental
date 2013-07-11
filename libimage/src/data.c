@@ -64,6 +64,7 @@ inline uint64 bswap64( uint64 input )
 }
 #endif
 
+/*
 inline size_t fsize( FILE *f )
 {
 	size_t pos = ftell( f );
@@ -74,3 +75,4 @@ inline size_t fsize( FILE *f )
 	fseek( f, pos, SEEK_SET );
 	return size;
 }
+*/
