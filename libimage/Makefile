@@ -10,7 +10,7 @@ ifeq ($(OS),Linux)
 	LDFLAGS+=-fPIC
 	LIB=$(PROG).so
 	CFLAGS+=--def export.def -s -fPIC -shared -g
-	T_CFLAGS=-L . ../libimage.so -lGL -lglut
+	T_CFLAGS=-L . ./libimage.so -lGL -lglut -lGLU
 else
 	LIB=$(PROG).dll
 	CFLAGS+=-shared -Wl,-add-stdcall-alias export.def
