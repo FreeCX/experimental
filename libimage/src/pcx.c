@@ -43,7 +43,8 @@ int8 pcx_load( FILE *f, image_t *img )
 	pcx_fmt_t h;
 	uint32 xsize, ysize, total_bytes;
 	uint8 *buffer, *data, count;
-	uint32 i = 0, j, n = 0, k;
+	uint32 i, n = 0;
+	size_t file_size;
 
 	memset( &h, 0, sizeof(pcx_fmt_t) );
 	fread( &h, 1, sizeof(pcx_fmt_t), f );
@@ -52,27 +53,29 @@ int8 pcx_load( FILE *f, image_t *img )
 	xsize = h.window.xmax - h.window.xmin + 1;
 	ysize = h.window.ymax - h.window.ymin + 1;
 	total_bytes = h.nplanes * h.bpl;
-	buffer = (uint8 *) malloc( total_bytes * ysize * sizeof(uint8) );
-	fread( buffer, 1, total_bytes * ysize * sizeof(uint8), f );
-	data = (uint8 *) malloc( xsize * ysize * h.nplanes * sizeof(uint8) );
+	file_size = fsize( f ) - sizeof(pcx_fmt_t);
+	buffer = (uint8 *) malloc( file_size * sizeof(uint8) );
+	fread( buffer, sizeof(uint8), file_size, f );
+	data = (uint8 *) malloc( total_bytes * ysize  * sizeof(uint8) );
 	img->bpp = h.bpp;
 	img->width = xsize;
 	img->height = ysize;
-	while ( i < total_bytes * ysize ) {
+	while ( n < total_bytes * ysize ) {
 		// 2 high bytes == 11
-		if ( buffer[i] >> 8 == 12 ) {
+		if ( *buffer >> 8 == 12 ) {
 			// get last 6 bytes
-			count = buffer[i] & 0x3F;
-			for ( j = 0; j < count; j++ ) {
-				data[n+j] = buffer[i+1];
-				// printf( "%x", data[n+j] );
+			count = *buffer & 0x3F;
+			buffer++;
+			for ( i = 0; i < count; i++ ) {
+				data[n+i] = *buffer;
+				// printf( "%x", data[n+i] );
 			}
 			n += count;
 		} else {
-			data[n] = buffer[i];
+			data[n] = *buffer;
 			// printf( "%x", data[n] );
 		}
-		n++; i++;
+		n++; buffer++;
 	}
 	img->data = data;
 	return STATUS_SUCCESS;

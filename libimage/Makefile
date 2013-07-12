@@ -10,9 +10,11 @@ ifeq ($(OS),Linux)
 	LDFLAGS+=-fPIC
 	LIB=$(PROG).so
 	CFLAGS+=--def export.def -s -fPIC -shared -g
+	T_CFLAGS=-L . ../libimage.so -lGL -lglut
 else
 	LIB=$(PROG).dll
 	CFLAGS+=-shared -Wl,-add-stdcall-alias export.def
+	T_CFLAGS=-L . libimage.dll -lfreeglut -lopengl32 -lglu32
 endif
 
 OBJS := $(patsubst %.c, %.o, $(SOURCES))
@@ -31,9 +33,13 @@ $(LIB): $(OBJS) $(DEPS)
 		sed -e 's%\($*\)\.o[ :]*%\1.o $@ : %g' > $@; \
 		[ -s $@ ] || rm -f $@
 	@echo create $@
+
+test:
+	$(CC) test.c -o test $(T_CFLAGS)
 	
 clean:
 	$(RM) $(LIB) $(OBJS) $(DEPS)
 	$(RM) *~
+	$(RM) test.exe test
  
 -include $(DEPS)

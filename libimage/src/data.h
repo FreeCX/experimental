@@ -28,6 +28,6 @@ typedef struct image image_t;
 inline uint16 bswap16( uint16 input );
 inline uint32 bswap32( uint32 input );
 inline uint64 bswap64( uint64 input );
-// inline size_t fsize( FILE *f );
+inline size_t fsize( FILE *f );
 
 #endif
