@@ -26,14 +26,14 @@ void pcx_info( pcx_fmt_t *h )
 		h->window.xmin, h->window.ymin, h->window.xmax, h->window.ymax, h->hdpi,
 		h->vdpi );
 	for ( i = 0; i < 48; i++ ) {
-		printf( "%u", h->colormap[i] );
+		printf( "%x", h->colormap[i] );
 	}
 	putchar( '\n' );
 
 	printf( pcx_info_02, h->reserved, h->nplanes, h->bpl, h->pallete_info,
 		h->hscreen_size, h->vscreen_size );
 	for ( i = 0; i < 54; i++ ) {
-		printf( "%u", h->filler[i] );
+		printf( "%x", h->filler[i] );
 	}
 	putchar( '\n' );
 }
