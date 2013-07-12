@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
-#include "../src/pcx.h"
+#include "src/pcx.h"
 
 void system_init( int *argc, char *argv[] );
 void system_opengl( void );
@@ -35,7 +35,7 @@ void system_opengl( void )
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-    f = fopen( "image.pcx", "r" );
+    f = fopen( "img/image.pcx", "r" );
     pcx_load( f, &img );
     fclose( f );
 }
