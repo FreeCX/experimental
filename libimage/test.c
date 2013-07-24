@@ -32,9 +32,6 @@ void system_opengl( void )
 {
     FILE *f;
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-    glEnable( GL_BLEND );
-    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-
     f = fopen( "img/image.pcx", "r" );
     pcx_load( f, &img );
     fclose( f );
@@ -46,8 +43,7 @@ void system_render( void )
     glClear( GL_COLOR_BUFFER_BIT );
     glRasterPos2f( -3.1f, 0.0f );
     glPixelZoom( 2.0f, 2.0 );
-    glDrawPixels( img.width, img.height, GL_RGB, 
-        GL_UNSIGNED_BYTE, img.data );
+    glDrawPixels( img.width, img.height, GL_RGB, GL_UNSIGNED_BYTE, img.data );
     glutSwapBuffers();
 }
 
@@ -70,7 +66,7 @@ void system_resize( const int width, const int height )
 
 void system_destroy( void )
 {
-    /* free using resource */
+    free( img.data );
 }
 
 int main( int argc, char *argv[] )
