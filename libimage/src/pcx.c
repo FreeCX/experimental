@@ -62,22 +62,28 @@ int8 pcx_load( FILE *f, image_t *img )
 	img->height = ysize;
 	while ( n < total_bytes * ysize ) {
 		// 2 high bytes == 11
-		if ( *buffer >> 8 == 12 ) {
+		if ( ( *buffer & 0xC0 ) == 0xC0 ) {
 			// get last 6 bytes
 			count = *buffer & 0x3F;
 			buffer++;
-			for ( i = 0; i < count; i++ ) {
-				data[n+i] = *buffer;
-				// printf( "%x", data[n+i] );
-			}
-			n += count;
 		} else {
-			data[n] = *buffer;
-			// printf( "%x", data[n] );
+			count = 1;
 		}
-		n++; buffer++;
+		for ( i = 0; i < count; i++ ) {
+			data[i+n] = *buffer;
+		}
+		n += count;
+		buffer++;
 	}
-	img->data = data;
+	buffer = malloc( total_bytes * ysize  * sizeof(uint8) );
+	for ( n = 0; n < ysize; n++ ) {
+		for ( i = 0; i < xsize; i++ ) {
+			buffer[3*(i+xsize*n)+0] = data[i+(0+3*n)*xsize];
+			buffer[3*(i+xsize*n)+1] = data[i+(1+3*n)*xsize];
+			buffer[3*(i+xsize*n)+2] = data[i+(2+3*n)*xsize];
+		}
+	}
+	img->data = buffer;
 	return STATUS_SUCCESS;
 }
 
