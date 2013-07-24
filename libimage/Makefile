@@ -24,6 +24,7 @@ $(LIB): $(OBJS) $(DEPS)
 	$(CC) $(OBJS) -o $@ $(CFLAGS)
 	strip -s $(LIB)
 	chmod -x $(LIB)
+	$(CC) test.c -o test $(T_CFLAGS)
  
 %.o: %.c %.d
 	$(CC) $(LDFLAGS) -c $< -o $@
@@ -33,9 +34,6 @@ $(LIB): $(OBJS) $(DEPS)
 		sed -e 's%\($*\)\.o[ :]*%\1.o $@ : %g' > $@; \
 		[ -s $@ ] || rm -f $@
 	@echo create $@
-
-test:
-	$(CC) test.c -o test $(T_CFLAGS)
 	
 clean:
 	$(RM) $(LIB) $(OBJS) $(DEPS)
