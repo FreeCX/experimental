@@ -64,6 +64,27 @@ inline uint64 bswap64( uint64 input )
 }
 #endif
 
+inline void swap8( uint8 *a, uint8 *b )
+{
+	uint8 t = *a;
+	*a = *b;
+	*b = t;
+}
+
+inline void swap16( uint16 *a, uint16 *b )
+{
+	uint16 t = *a;
+	*a = *b;
+	*b = t;
+}
+
+inline void swap32( uint32 *a, uint32 *b )
+{
+	uint32 t = *a;
+	*a = *b;
+	*b = t;
+}
+
 inline size_t fsize( FILE *f )
 {
 	size_t pos = ftell( f );
