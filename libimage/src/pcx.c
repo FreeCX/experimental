@@ -43,16 +43,18 @@ int8 pcx_load( FILE *f, image_t *img )
 	pcx_fmt_t h;
 	uint32 xsize, ysize, total_bytes;
 	uint8 *buffer, *data, count;
+	uint8 plane;
 	uint32 i, n = 0;
 	size_t file_size;
 
 	memset( &h, 0, sizeof(pcx_fmt_t) );
 	fread( &h, 1, sizeof(pcx_fmt_t), f );
 	fseek( f, sizeof(pcx_fmt_t), SEEK_SET );
-	pcx_info( &h );
+	// pcx_info( &h );
 	xsize = h.window.xmax - h.window.xmin + 1;
 	ysize = h.window.ymax - h.window.ymin + 1;
 	total_bytes = h.nplanes * h.bpl;
+	plane = h.nplanes;
 	file_size = fsize( f ) - sizeof(pcx_fmt_t);
 	buffer = (uint8 *) malloc( file_size * sizeof(uint8) );
 	fread( buffer, sizeof(uint8), file_size, f );
@@ -75,15 +77,34 @@ int8 pcx_load( FILE *f, image_t *img )
 		n += count;
 		buffer++;
 	}
-	buffer = malloc( total_bytes * ysize  * sizeof(uint8) );
-	for ( n = 0; n < ysize; n++ ) {
-		for ( i = 0; i < xsize; i++ ) {
-			buffer[3*(i+xsize*(ysize-n-1))+0] = data[i+(0+3*n)*xsize];
-			buffer[3*(i+xsize*(ysize-n-1))+1] = data[i+(1+3*n)*xsize];
-			buffer[3*(i+xsize*(ysize-n-1))+2] = data[i+(2+3*n)*xsize];
-		}
-	}
+	buffer = malloc( total_bytes * ysize * sizeof(uint8) );
 	img->data = buffer;
+	/* support RGB & RGBA color */
+	switch ( plane ) {
+		case IMAGE_MONO:
+			/* not supported */
+			img->data = data;
+			break;
+		case IMAGE_RGB:
+			for ( n = 0; n < ysize; n++ ) {
+				for ( i = 0; i < xsize; i++ ) {
+					buffer[plane*(i+xsize*(ysize-n-1))+0] = data[i+(0+plane*n)*xsize];
+					buffer[plane*(i+xsize*(ysize-n-1))+1] = data[i+(1+plane*n)*xsize];
+					buffer[plane*(i+xsize*(ysize-n-1))+2] = data[i+(2+plane*n)*xsize];
+				}
+			}
+			break;
+		case IMAGE_RGBA:
+			for ( n = 0; n < ysize; n++ ) {
+				for ( i = 0; i < xsize; i++ ) {
+					buffer[plane*(i+xsize*(ysize-n-1))+0] = data[i+(0+plane*n)*xsize];
+					buffer[plane*(i+xsize*(ysize-n-1))+1] = data[i+(1+plane*n)*xsize];
+					buffer[plane*(i+xsize*(ysize-n-1))+2] = data[i+(2+plane*n)*xsize];
+					buffer[plane*(i+xsize*(ysize-n-1))+3] = data[i+(3+plane*n)*xsize];
+				}
+			}
+			break;
+	}
 	return STATUS_SUCCESS;
 }
 
