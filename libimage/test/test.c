@@ -31,6 +31,7 @@ void system_opengl( void )
 {
     FILE *f;
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    img_debug( 1 );
     img_load( "../img/image.pcx", &img );
 }
 
