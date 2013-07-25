@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
-#include "src/pcx.h"
+#include "../src/pcx.h"
 
 void system_init( int *argc, char *argv[] );
 void system_opengl( void );
@@ -32,7 +32,7 @@ void system_opengl( void )
 {
     FILE *f;
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-    f = fopen( "img/image.pcx", "r" );
+    f = fopen( "../img/image.pcx", "r" );
     pcx_load( f, &img );
     fclose( f );
 }
