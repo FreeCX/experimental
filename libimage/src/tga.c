@@ -40,14 +40,32 @@ void tga_info( tga_fmt_t *h )
 int8 tga_load( FILE *f, image_t *img )
 {
 	tga_fmt_t h;
-	uint8 buffer[sizeof(tga_fmt_t)];
+	uint32 xsize, ysize, image_size, i;
+	uint8 header[sizeof(tga_fmt_t)], depth;
+	uint8 *buffer, tmp;
 
 	memset( &h, 0, sizeof(tga_fmt_t) );
-	fread( &buffer, 1, sizeof(tga_fmt_t), f );
-	buffer2tga( buffer, &h );
+	fread( &header, 1, sizeof(tga_fmt_t), f );
+	fseek( f, sizeof(tga_fmt_t), SEEK_SET );
+	buffer2tga( header, &h );
 	if ( __DEBUG_FLAG__ ) {
 		tga_info( &h );
 	}
+	xsize = h.ispec.img_width;
+	ysize = h.ispec.img_height;
+	depth = h.ispec.img_depth;
+	if ( depth != 8 && depth != 24 && depth != 32 ) {
+		return EXIT_FAILURE;
+	}
+	/*
+	image_size = xsize * ysize * depth / 8;
+	buffer = (uint8 *) malloc( image_size * sizeof(uint8) );
+	fread( buffer, image_size, 1, f );
+	img->data = buffer;
+	*/
+	img->bpp = depth / 8;
+	img->width = xsize;
+	img->height = ysize;
 	return STATUS_SUCCESS;
 }
 
