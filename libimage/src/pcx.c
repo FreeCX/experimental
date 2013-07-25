@@ -78,9 +78,9 @@ int8 pcx_load( FILE *f, image_t *img )
 	buffer = malloc( total_bytes * ysize  * sizeof(uint8) );
 	for ( n = 0; n < ysize; n++ ) {
 		for ( i = 0; i < xsize; i++ ) {
-			buffer[3*(i+xsize*n)+0] = data[i+(0+3*n)*xsize];
-			buffer[3*(i+xsize*n)+1] = data[i+(1+3*n)*xsize];
-			buffer[3*(i+xsize*n)+2] = data[i+(2+3*n)*xsize];
+			buffer[3*(i+xsize*(ysize-n-1))+0] = data[i+(0+3*n)*xsize];
+			buffer[3*(i+xsize*(ysize-n-1))+1] = data[i+(1+3*n)*xsize];
+			buffer[3*(i+xsize*(ysize-n-1))+2] = data[i+(2+3*n)*xsize];
 		}
 	}
 	img->data = buffer;
