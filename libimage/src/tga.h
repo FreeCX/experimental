@@ -7,7 +7,7 @@ struct cmap_spec {
 	uint16 	entry_index;            // first colour map entry in pallete
 	uint16 	length;                 // number of colours in palette
 	uint8 	entry_size;             // number of bits per palette entry:
-                                    // 15, 16, 24, 32
+                                    	// 15, 16, 24, 32
 };
 typedef struct cmap_spec cmap_spec_t;
 
@@ -24,11 +24,11 @@ typedef struct img_spec img_spec_t;
 struct tga_fmt {
 	uint8 	id_length;              // size of ID field (0 usually)
 	uint8 	color_map;              // type of color map: 
-                                    // 0 = none, 1 = has palette
+                                    	// 0 = none, 1 = has palette
 	uint8 	img_type;               // type of image: 0 - none, 1 - indexed
-                                    // 2 = rgb, 3 - grey, +8 = rle packed
+                                    	// 2 = rgb, 3 - grey, +8 = rle packed
 	cmap_spec_t cspec;
-	img_spec_t 	ispec;
+	img_spec_t  ispec;
 };
 typedef struct tga_fmt tga_fmt_t;
 
