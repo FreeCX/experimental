@@ -1,4 +1,4 @@
-CC=clang
+#CC=clang
 SOURCE=test.c
 OS=$(shell uname -s)
 
