@@ -32,6 +32,8 @@ struct tga_fmt {
 };
 typedef struct tga_fmt tga_fmt_t;
 
+extern uint8 __DEBUG_FLAG__;
+
 void tga_info( tga_fmt_t *h );
 int8 tga_load( FILE *f, image_t *img );
 int8 tga_save( FILE *f, image_t *img );

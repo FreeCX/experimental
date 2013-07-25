@@ -30,7 +30,9 @@ int8 bmp_load( FILE *f, image_t *img )
 
     memset( &h, 0, sizeof(bmp_fmt_t) );
     fread( &h, 1, sizeof(bmp_fmt_t), f );
-    bmp_info( &h );
+    if ( __DEBUG_FLAG__ ) {
+        bmp_info( &h );
+    }
 	return STATUS_SUCCESS;
 }
 

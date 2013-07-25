@@ -1,5 +1,7 @@
 #include "data.h"
 
+uint8 __DEBUG_FLAG__ = 0;
+
 #ifdef ARCH_X86
 inline uint16 bswap16( uint16 input )
 {

@@ -30,6 +30,8 @@ struct pcx_fmt {
 };
 typedef struct pcx_fmt pcx_fmt_t;
 
+extern uint8 __DEBUG_FLAG__;
+
 void pcx_info( pcx_fmt_t *h );
 int8 pcx_load( FILE *f, image_t *img );
 int8 pcx_save( FILE *f, image_t *img );

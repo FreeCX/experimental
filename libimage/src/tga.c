@@ -45,7 +45,9 @@ int8 tga_load( FILE *f, image_t *img )
 	memset( &h, 0, sizeof(tga_fmt_t) );
 	fread( &buffer, 1, sizeof(tga_fmt_t), f );
 	buffer2tga( buffer, &h );
-	tga_info( &h );
+	if ( __DEBUG_FLAG__ ) {
+		tga_info( &h );
+	}
 	return STATUS_SUCCESS;
 }
 

@@ -29,7 +29,6 @@ void pcx_info( pcx_fmt_t *h )
 		printf( "%x", h->colormap[i] );
 	}
 	putchar( '\n' );
-
 	printf( pcx_info_02, h->reserved, h->nplanes, h->bpl, h->pallete_info,
 		h->hscreen_size, h->vscreen_size );
 	for ( i = 0; i < 54; i++ ) {
@@ -50,7 +49,9 @@ int8 pcx_load( FILE *f, image_t *img )
 	memset( &h, 0, sizeof(pcx_fmt_t) );
 	fread( &h, 1, sizeof(pcx_fmt_t), f );
 	fseek( f, sizeof(pcx_fmt_t), SEEK_SET );
-	// pcx_info( &h );
+	if ( __DEBUG_FLAG__ ) {
+		pcx_info( &h );
+	}
 	xsize = h.window.xmax - h.window.xmin + 1;
 	ysize = h.window.ymax - h.window.ymin + 1;
 	total_bytes = h.nplanes * h.bpl;
