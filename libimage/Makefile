@@ -10,11 +10,9 @@ ifeq ($(OS),Linux)
 	LDFLAGS+=-fPIC
 	LIB=$(PROG).so
 	CFLAGS+=--def export.def -s -fPIC -shared -g
-	T_CFLAGS=-L . ./libimage.so -lGL -lglut -lGLU
 else
 	LIB=$(PROG).dll
 	CFLAGS+=-shared -Wl,-add-stdcall-alias export.def
-	T_CFLAGS=-L . libimage.dll -lfreeglut -lopengl32 -lglu32
 endif
 
 OBJS := $(patsubst %.c, %.o, $(SOURCES))
@@ -24,7 +22,7 @@ $(LIB): $(OBJS) $(DEPS)
 	$(CC) $(OBJS) -o $@ $(CFLAGS)
 	strip -s $(LIB)
 	chmod -x $(LIB)
-	$(CC) test.c -o test $(T_CFLAGS)
+	cp $(LIB) test/
  
 %.o: %.c %.d
 	$(CC) $(LDFLAGS) -c $< -o $@
@@ -36,8 +34,6 @@ $(LIB): $(OBJS) $(DEPS)
 	@echo create $@
 	
 clean:
-	$(RM) $(LIB) $(OBJS) $(DEPS)
-	$(RM) *~
-	$(RM) test.exe test
+	$(RM) $(LIB) $(OBJS) $(DEPS) *~ test/$(LIB)
  
 -include $(DEPS)
