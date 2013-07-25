@@ -60,9 +60,6 @@ int8 pcx_load( FILE *f, image_t *img )
 	buffer = (uint8 *) malloc( file_size * sizeof(uint8) );
 	fread( buffer, sizeof(uint8), file_size, f );
 	data = (uint8 *) malloc( total_bytes * ysize  * sizeof(uint8) );
-	img->bpp = h.bpp;
-	img->width = xsize;
-	img->height = ysize;
 	while ( n < total_bytes * ysize ) {
 		// 2 high bytes == 11
 		if ( ( *buffer & 0xC0 ) == 0xC0 ) {
@@ -80,6 +77,9 @@ int8 pcx_load( FILE *f, image_t *img )
 	}
 	buffer = malloc( total_bytes * ysize * sizeof(uint8) );
 	img->data = buffer;
+	img->bpp = h.bpp;
+	img->width = xsize;
+	img->height = ysize;
 	/* support RGB & RGBA color */
 	switch ( plane ) {
 		case IMAGE_MONO:
