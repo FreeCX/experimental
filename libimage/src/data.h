@@ -17,6 +17,9 @@ typedef unsigned long int uint64;	// size = 8
 
 #define STATUS_SUCCESS				0
 #define STATUS_FAILED				1
+#define IMAGE_MONO					1
+#define IMAGE_RGB					3
+#define IMAGE_RGBA					4
 
 struct image {
 	uint8 *data;
