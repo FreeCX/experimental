@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef signed char int8;			// size = 1
-typedef signed short int16;			// size = 2
-typedef signed int int32;			// size = 4
+typedef signed char int8;		// size = 1
+typedef signed short int16;		// size = 2
+typedef signed int int32;		// size = 4
 typedef signed long int int64;		// size = 8
 
 typedef unsigned char uint8;		// size = 1
@@ -15,11 +15,11 @@ typedef unsigned short uint16;		// size = 2
 typedef unsigned int uint32;		// size = 4
 typedef unsigned long int uint64;	// size = 8
 
-#define STATUS_SUCCESS				0
-#define STATUS_FAILED				1
-#define IMAGE_MONO					1
-#define IMAGE_RGB					3
-#define IMAGE_RGBA					4
+#define STATUS_SUCCESS			0
+#define STATUS_FAILED			1
+#define IMAGE_MONO			1
+#define IMAGE_RGB			3
+#define IMAGE_RGBA			4
 
 struct image {
 	uint8 *data;
