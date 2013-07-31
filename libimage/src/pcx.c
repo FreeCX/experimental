@@ -77,7 +77,7 @@ int8 pcx_load( FILE *f, image_t *img )
 	}
 	buffer = malloc( total_bytes * ysize * sizeof(uint8) );
 	img->data = buffer;
-	img->bpp = h.bpp;
+	img->bpp = plane * h.bpp / 8;
 	img->width = xsize;
 	img->height = ysize;
 	/* support RGB & RGBA color */
@@ -94,6 +94,7 @@ int8 pcx_load( FILE *f, image_t *img )
 					buffer[plane*(i+xsize*(ysize-n-1))+2] = data[i+(2+plane*n)*xsize];
 				}
 			}
+			img->c_format = GL_RGB;
 			break;
 		case IMAGE_RGBA:
 			for ( n = 0; n < ysize; n++ ) {
@@ -104,6 +105,7 @@ int8 pcx_load( FILE *f, image_t *img )
 					buffer[plane*(i+xsize*(ysize-n-1))+3] = data[i+(3+plane*n)*xsize];
 				}
 			}
+			img->c_format = GL_RGBA;
 			break;
 	}
 	return STATUS_SUCCESS;
