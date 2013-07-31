@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <GL/gl.h>
 
 typedef signed char int8;           // size = 1
 typedef signed short int16;         // size = 2
@@ -22,6 +23,7 @@ typedef unsigned long int uint64;   // size = 8
 #define IMAGE_RGBA                  4
 
 struct image {
+	uint32 c_format;
 	uint8 *data;
 	uint8 bpp;
 	uint32 width, height;
