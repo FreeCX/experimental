@@ -14,27 +14,11 @@ char tga_info_01[] =
 	"tga.imgs.img_depth   = %u\n"
 	"tga.imgs.img_descr   = %u\n";
 
-static void buffer2tga( uint8 buffer[sizeof(tga_fmt_t)], tga_fmt_t *h )
-{
-	h->id_length = buffer[0];
-	h->color_map = buffer[1];
-    h->img_type = buffer[2];
-    h->cspec.entry_index = buffer[3] + buffer[4] * 0xff;
-    h->cspec.length = buffer[5] + buffer[6] * 0xff;
-    h->cspec.entry_index = buffer[7];
-    h->ispec.x_origin = buffer[8] + buffer[9] * 0xff;
-    h->ispec.y_origin = buffer[10] + buffer[11] * 0xff;
-    h->ispec.img_width = buffer[12] + buffer[13] * 0xff;
-    h->ispec.img_height = buffer[14] + buffer[15] * 0xff; 
-    h->ispec.img_depth = buffer[16];
-    h->ispec.img_descriptor = buffer[17];
-}
-
 void tga_info( tga_fmt_t *h )
 {
-	printf( tga_info_01, h->id_length, h->color_map, h->img_type, h->cspec.entry_index, 
-		h->cspec.length, h->cspec.entry_size, h->ispec.x_origin, h->ispec.y_origin,
-		h->ispec.img_width, h->ispec.img_height, h->ispec.img_depth, h->ispec.img_descriptor );
+	printf( tga_info_01, h->id_length, h->color_map, h->img_type, h->entry_index, 
+		h->length, h->entry_size, h->x_origin, h->y_origin,
+		h->img_width, h->img_height, h->img_depth, h->img_descriptor );
 }
 
 int8 tga_load( FILE *f, image_t *img )
@@ -42,30 +26,38 @@ int8 tga_load( FILE *f, image_t *img )
 	tga_fmt_t h;
 	uint32 xsize, ysize, image_size, i;
 	uint8 header[sizeof(tga_fmt_t)], depth;
-	uint8 *buffer, tmp;
+	uint8 *buffer;
 
 	memset( &h, 0, sizeof(tga_fmt_t) );
-	fread( &header, 1, sizeof(tga_fmt_t), f );
-	fseek( f, sizeof(tga_fmt_t), SEEK_SET );
-	buffer2tga( header, &h );
+	fread( &h, sizeof(tga_fmt_t), 1, f );
 	if ( __DEBUG_FLAG__ ) {
 		tga_info( &h );
 	}
-	xsize = h.ispec.img_width;
-	ysize = h.ispec.img_height;
-	depth = h.ispec.img_depth;
+	xsize = h.img_width;
+	ysize = h.img_height;
+	depth = h.img_depth;
 	if ( depth != 8 && depth != 24 && depth != 32 ) {
 		return EXIT_FAILURE;
 	}
-	/*
-	image_size = xsize * ysize * depth / 8;
+	depth /= 8;
+	image_size = xsize * ysize * depth;
 	buffer = (uint8 *) malloc( image_size * sizeof(uint8) );
 	fread( buffer, image_size, 1, f );
 	img->data = buffer;
-	*/
-	img->bpp = depth / 8;
+	img->bpp = depth;
 	img->width = xsize;
 	img->height = ysize;
+	switch ( depth ) {
+		case 1:
+    		img->c_format = GL_LUMINANCE8;
+    		break;
+    	case 3:
+    		img->c_format = GL_BGR;
+    		break;
+    	case 4:
+    		img->c_format = GL_RGBA;
+    		break;
+	}
 	return STATUS_SUCCESS;
 }
 
