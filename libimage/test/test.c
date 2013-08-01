@@ -12,10 +12,10 @@ void system_render( void );
 void system_resize( const int width, const int height );
 void system_destroy( void );
 
-image_t img;
-float w, h;
 char def[] = "../img/image.pcx";
 char *img_file;
+image_t img;
+float w, h;
 
 void system_init( int *argc, char *argv[] )
 {
@@ -44,7 +44,6 @@ void system_destroy( void )
 
 void system_opengl( void )
 {
-    FILE *f;
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE );
     glEnable( GL_BLEND );
