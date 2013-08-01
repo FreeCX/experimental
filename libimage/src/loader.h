@@ -4,6 +4,7 @@
 #include "bmp.h"
 #include "pcx.h"
 #include "tga.h"
+#include "error.h"
 
 extern uint8 __DEBUG_FLAG__;
 

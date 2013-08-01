@@ -23,8 +23,10 @@ uint8 img_load( char *filename, image_t *img )
 {
 	FILE *f;
 	size_t i, select = 0;
+	uint32 status;
 
 	if ( ( f = fopen( filename, "r" ) ) == NULL ) {
+		img_send_error( LI_ERROR_OPEN_FILE );
 		return STATUS_FAILED;
 	}
 	if ( __DEBUG_FLAG__ ) {
@@ -37,18 +39,17 @@ uint8 img_load( char *filename, image_t *img )
 	}
 	switch ( select ) {
 		case FORMAT_NONE:
-			printf( "Unsupported file format!\n" );
+			img_send_error( LI_ERROR_UNSUPPORTED_FORMAT );
 			return STATUS_FAILED;
 		case FORMAT_BMP:
-			bmp_load( f, img );
-			break;
+			status = bmp_load( f, img );
 		case FORMAT_PCX:
-			pcx_load( f, img );
+			status = pcx_load( f, img );
 			break;
 		case FORMAT_TGA:
-			tga_load( f, img );
+			status = tga_load( f, img );
 			break;
 	}
 	fclose( f );
-	return STATUS_SUCCESS;
+	return status;
 }

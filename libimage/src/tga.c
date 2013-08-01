@@ -26,7 +26,7 @@ int8 tga_load( FILE *f, image_t *img )
 	tga_fmt_t h;
 	uint32 xsize, ysize, image_size, i;
 	uint8 header[sizeof(tga_fmt_t)], depth;
-	uint8 *buffer;
+	uint8 *data;
 
 	memset( &h, 0, sizeof(tga_fmt_t) );
 	fread( &h, sizeof(tga_fmt_t), 1, f );
@@ -41,12 +41,22 @@ int8 tga_load( FILE *f, image_t *img )
 	}
 	depth /= 8;
 	image_size = xsize * ysize * depth;
-	buffer = (uint8 *) malloc( image_size * sizeof(uint8) );
-	fread( buffer, image_size, 1, f );
-	img->data = buffer;
-	img->bpp = depth;
-	img->width = xsize;
-	img->height = ysize;
+	switch ( h.img_type ) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			data = (uint8 *) malloc( image_size * sizeof(uint8) );
+			fread( data, image_size, 1, f );
+			img->data = data;
+			img->bpp = depth;
+			img->width = xsize;
+			img->height = ysize;
+			break;
+		default:
+			img_module_error( "tga image type %u not supported", h.img_type );
+			break;
+	}
 	switch ( depth ) {
 		case 1:
     		img->c_format = GL_LUMINANCE8;

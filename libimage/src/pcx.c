@@ -84,6 +84,7 @@ int8 pcx_load( FILE *f, image_t *img )
 	switch ( plane ) {
 		case IMAGE_MONO:
 			/* not supported */
+			img_module_error( "pcx mono image not supported!" );
 			img->data = data;
 			break;
 		case IMAGE_RGB:
