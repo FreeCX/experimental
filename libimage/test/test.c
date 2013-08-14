@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
-#include <GL/freeglut.h>
 #include "../src/loader.h"
 
 void system_init( int *argc, char *argv[] );

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <GL/gl.h>
+#include <GL/glext.h>
 
 typedef signed char int8;           // size = 1
 typedef signed short int16;         // size = 2

@@ -11,7 +11,7 @@ else
 endif
 
 all:
-	$(CC) $(CFLAGS) $(SOURCE) -o $(PROG) 
+	$(CC) $(SOURCE) $(CFLAGS) -o $(PROG) 
 	
 clean:
 	$(RM) $(PROG)
