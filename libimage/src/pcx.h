@@ -3,20 +3,15 @@
 
 #include "data.h"
 
-struct img_dim {
-	uint16 	xmin;
-	uint16 	ymin;
-	uint16 	xmax;
-	uint16 	ymax;
-};
-typedef struct img_dim img_dim_t;
-
 struct pcx_fmt {
 	uint8   manufacturer;   // Constant Flag, 10 = ZSoft .pcx 
 	uint8   version;        // Version information [ 0, 2, 3, 4, 5 ]
 	uint8   encoding;       // 1 = .PCX run length encoding 
 	uint8   bpp;            // Number of bits to represent a pixel (per Plane) - 1, 2, 4, or 8 
-	img_dim_t window;       // Image Dimensions [ see img_dim struct ]
+	uint16 	xmin;			//
+	uint16 	ymin;			// Image
+	uint16 	xmax;			// Dimensions
+	uint16 	ymax;			//
 	uint16  hdpi;           // Horizontal Resolution of image in DPI*
 	uint16  vdpi;           // Vertical Resolution of image in DPI*
 	uint8   colormap[48];   // Color palette setting

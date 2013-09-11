@@ -23,8 +23,7 @@ void pcx_info( pcx_fmt_t *h )
 	uint8 i;
 
 	printf( pcx_info_01, h->manufacturer, h->version, h->encoding, h->bpp, 
-		h->window.xmin, h->window.ymin, h->window.xmax, h->window.ymax, h->hdpi,
-		h->vdpi );
+		h->xmin, h->ymin, h->xmax, h->ymax, h->hdpi, h->vdpi );
 	for ( i = 0; i < 48; i++ ) {
 		printf( "%x", h->colormap[i] );
 	}
@@ -52,8 +51,8 @@ int8 pcx_load( FILE *f, image_t *img )
 	if ( __DEBUG_FLAG__ ) {
 		pcx_info( &h );
 	}
-	xsize = h.window.xmax - h.window.xmin + 1;
-	ysize = h.window.ymax - h.window.ymin + 1;
+	xsize = h.xmax - h.xmin + 1;
+	ysize = h.ymax - h.ymin + 1;
 	total_bytes = h.nplanes * h.bpl;
 	plane = h.nplanes;
 	file_size = fsize( f ) - sizeof(pcx_fmt_t);
@@ -121,8 +120,8 @@ int8 pcx_save( FILE *f, image_t *img )
 	h.version = 5;
 	h.encoding = 1;
 	h.bpp = img->bpp;
-	h.window.xmax = img->width - 1;
-	h.window.ymax = img->height - 1;
+	h.xmax = img->width - 1;
+	h.ymax = img->height - 1;
 	h.bpl = img->width;
 	h.pallete_info = 1;
 	/* input code */
