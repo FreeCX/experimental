@@ -95,6 +95,7 @@ int8 pcx_load( FILE *f, image_t *img )
 				}
 			}
 			img->c_format = GL_RGB;
+			img->data = buffer;
 			break;
 		case IMAGE_RGBA:
 			for ( n = 0; n < ysize; n++ ) {
@@ -106,6 +107,7 @@ int8 pcx_load( FILE *f, image_t *img )
 				}
 			}
 			img->c_format = GL_RGBA;
+			img->data = buffer;
 			break;
 	}
 	return STATUS_SUCCESS;
