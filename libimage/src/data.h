@@ -31,12 +31,16 @@ struct image {
 };
 typedef struct image image_t;
 
-inline uint16 bswap16( uint16 input );
-inline uint32 bswap32( uint32 input );
-inline uint64 bswap64( uint64 input );
-inline void swap8( uint8 *a, uint8 *b );
-inline void swap16( uint16 *a, uint16 *b );
-inline void swap32( uint32 *a, uint32 *b );
+// inline uint16 bswap16( uint16 input );
+// inline uint32 bswap32( uint32 input );
+// inline uint64 bswap64( uint64 input );
+// inline void swap8( uint8 *a, uint8 *b );
+// inline void swap16( uint16 *a, uint16 *b );
+// inline void swap32( uint32 *a, uint32 *b );
 inline size_t fsize( FILE *f );
+
+// inline uint16 lsb16( uint16 a );
+// inline uint32 lsb32( uint32 a );
+// inline uint64 lsb64( uint64 a );
 
 #endif
