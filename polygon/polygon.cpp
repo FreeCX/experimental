@@ -54,7 +54,7 @@ void program_keyboard( unsigned char key, int x, int y )
         if ( fullscreen ) {
             glutFullScreen();
         } else {
-            glutReshapeWindow( window_width, window_height );
+            glutReshapeWindow( w_width, w_height );
         }
         fullscreen = !fullscreen;
     }
