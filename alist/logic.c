@@ -1,12 +1,13 @@
 #include "logic.h"
 
-char list_format[] = "%s # %s # %c %u\n";
+char list_format[] = "%s # %s # %u %u\n";
 char status[][64] = {
 	"просмотр окончен",
 	"в процессе просмотра",
 	"в ожидании серий",
-	"другое"
+    "другое"
 };
+unsigned int status_len = 4;
 unsigned int list_count = 0;
 
 void strcopy( char *dest, char *source, int n, int m )
@@ -23,7 +24,7 @@ void strcopy( char *dest, char *source, int n, int m )
 void list_parser( char str[], list_t *lst )
 {
 	list_t *a = lst;
-	int len = strlen( str ), n[3], i = 0, j = 0;
+    int n[3], i = 0, j = 0;
 	char buffer[16];
 
 	while ( str[i] != '\n' ) {
@@ -31,11 +32,11 @@ void list_parser( char str[], list_t *lst )
 			n[j++] = i;
 		}
 	}
-	a->org_name = malloc( (n[0]-2) * sizeof(char) );
-	a->rus_name = malloc( (n[1]-2) * sizeof(char) );
+    a->org_name = (char *) malloc( (n[0]-2) * sizeof(char) );
+    a->rus_name = (char *) malloc( (n[1]-2) * sizeof(char) );
 	strcopy( a->org_name, str, 0, n[0]-2 );
-	strcopy( a->rus_name, str, n[0]+1, n[1]-2 );
-	a->status = str[n[1]+1];
+    strcopy( a->rus_name, str, n[0]+1, n[1]-2 );
+    a->status = str[n[1]+1] - '0';
 	strcopy( buffer, str, n[1]+3, strlen( str ) );
 	a->series = atoi( buffer );
 }
@@ -45,20 +46,20 @@ list_t *list_load( char *name )
 	FILE *f;
 	char org_name[MAX_STR];
 	char rus_name[MAX_STR];
-	unsigned int series;
-	char status, buffer[MAX_STR];
+    unsigned int series, status;
+    char buffer[MAX_STR];
 	list_t *l, *a = NULL;
 	
 	list_count = 0;
 	if ( a != NULL ) {
 		list_clean( a );
-	}
+    }
 	f = fopen( name, "r" );
 	if ( f == NULL ) {
 		return NULL;
 	}
 	while ( !feof( f ) ) {
-		l = malloc( sizeof(list_t) );
+        l = (list_t *) malloc( sizeof(list_t) );
 		assert( l );
 		memset( buffer, 0, MAX_STR * sizeof(char) );
 		if ( fgets( buffer, MAX_STR, f ) != NULL ) {
@@ -105,11 +106,11 @@ list_t *list_append( list_t *a, list_t *b )
 	list_t *l1 = a, *l2 = b, *l3 = NULL;
 
 	while ( l2 != NULL ) {
-		l3 = malloc( sizeof(list_t) );
+        l3 = (list_t *) malloc( sizeof(list_t) );
 		assert( l3 );
 		memset( l3, 0, sizeof(list_t) );
-		l3->org_name = malloc( strlen(l2->org_name) * sizeof(char) );
-		l3->rus_name = malloc( strlen(l2->rus_name) * sizeof(char) );
+        l3->org_name = (char *) malloc( strlen(l2->org_name) * sizeof(char) );
+        l3->rus_name = (char *) malloc( strlen(l2->rus_name) * sizeof(char) );
 		list_copy( l3, l2 );
 		l3->index = l1->index + 1;
 		l3->next = l1;
@@ -127,7 +128,7 @@ elem_t *list_search_by_name( list_t *lst, char *search )
 
 	while ( a != NULL ) {
 		if ( strstr( a->org_name, search ) || strstr( a->rus_name, search ) ) {
-			b = malloc( sizeof(elem_t) );
+            b = (elem_t *) malloc( sizeof(elem_t) );
 			assert( b );
 			memset( b, 0, sizeof(elem_t) );
 			b->index = a->index;
@@ -147,7 +148,7 @@ elem_t *list_search_by_status( list_t *lst, char status )
 
 	while ( a != NULL ) {
 		if ( a->status == status ) {
-			b = malloc( sizeof(elem_t) );
+            b = (elem_t *) malloc( sizeof(elem_t) );
 			assert( b );
 			memset( b, 0, sizeof(elem_t) );
 			b->index = a->index;
@@ -167,7 +168,7 @@ elem_t *list_search_by_series( list_t *lst, int series )
 
 	while ( a != NULL ) {
 		if ( a->series == series ) {
-			b = malloc( sizeof(elem_t) );
+            b = (elem_t *) malloc( sizeof(elem_t) );
 			assert( b );
 			memset( b, 0, sizeof(elem_t) );
 			b->index = a->index;
@@ -178,27 +179,6 @@ elem_t *list_search_by_series( list_t *lst, int series )
 	}
 	e->next = NULL;
 	return e;
-}
-
-char *list_status( char stat )
-{
-	int i;
-
-	switch ( stat ) {
-		case '-':
-			i = 0;
-			break;
-		case '*':
-			i = 1;
-			break;
-		case '!':
-			i = 2;
-			break;
-		case '$':
-			i = 3;
-			break;
-	}
-	return status[i];
 }
 
 int list_print( list_t *lst )
@@ -216,9 +196,9 @@ int list_print( list_t *lst )
 		printf( "index: %u\n", a->index );
 		printf( "next:  %p\n", a->next );
 		if ( a->series == 0 ) {
-			printf( text_mini, a->org_name, a->rus_name, list_status( a->status ) );
+            printf( text_mini, a->org_name, a->rus_name, a->status );
 		} else {
-			printf( text_full, a->org_name, a->rus_name, list_status( a->status ), a->series );
+            printf( text_full, a->org_name, a->rus_name, a->status, a->series );
 		}
 		a = a->next;
 	}
@@ -227,15 +207,15 @@ int list_print( list_t *lst )
 
 void list_clean( list_t *lst )
 {
-	list_t *c = lst;
+    list_t *c = lst, *a;
 	int count = 0;
 
     while ( c != NULL ) {
-    	printf( "cound: %d\n", count );
         free( c->org_name );
         free( c->rus_name );
-        free( c );
+        a = c;
         c = c->next;
+        free( a );
         count++;
     }
 }
@@ -252,4 +232,13 @@ list_t *list_reverse( list_t *lst )
 		curr = next;
 	}
 	return lst;
+}
+
+char * list_status( int i )
+{
+    if ( i < status_len ) {
+        return status[i];
+    } else {
+        return NULL;
+    }
 }

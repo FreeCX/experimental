@@ -7,16 +7,18 @@
 #include <string.h>
 
 #define MAX_STR					256
-#define STATUS_FINISHED			'-'
-#define STATUS_IN_PROGRESS		'*'
-#define STATUS_WAITING			'!'
-#define STATIS_OTHER			'$'
+enum {
+    STATUS_FINISHED = 0,
+    STATUS_IN_PROGRESS,
+    STATUS_WAITING,
+    STATUS_OTHER
+};
 
 struct list {
 	char *org_name;
 	char *rus_name;
 	unsigned int series;
-	char status;
+    unsigned int status;
 	unsigned int index;
 	struct list *next;
 };
@@ -37,9 +39,9 @@ list_t *list_append( list_t *a, list_t *b );
 elem_t *list_search_by_name( list_t *lst, char *search );
 elem_t *list_search_by_status( list_t *lst, char status );
 elem_t *list_search_by_series( list_t *lst, int series );
-char *list_status( char status );
 int list_print( list_t *lst );
 void list_clean( list_t *lst );
 list_t *list_reverse( list_t *lst );
+char * list_status( int i );
 	
 #endif
