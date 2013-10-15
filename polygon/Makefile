@@ -1,5 +1,5 @@
 PROG=polygon
-CC=g++
+CC=clang++
 SOURCES=polygon.cpp
 CFLAGS=-Wall -O3
 LDCONFIG=
