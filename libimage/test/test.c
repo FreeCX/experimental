@@ -8,17 +8,20 @@
 void system_init( int *argc, char *argv[] );
 void system_opengl( void );
 void system_render( void );
+void system_redraw( int value );
 void system_resize( const int width, const int height );
 void system_destroy( void );
 
 char def[] = "../img/image.bmp";
 char *img_file;
 image_t img;
-float w, h;
+int w_width = 332, w_height = 50;
 
 void system_init( int *argc, char *argv[] )
 {
+	GLint sw, sh;
     size_t len;
+
     if ( *argc == 2 && ( len = strlen( argv[1] ) ) > 0 ) {
         img_file = malloc( len );
         strcpy( img_file, argv[1] );
@@ -26,12 +29,16 @@ void system_init( int *argc, char *argv[] )
         img_file = def;
     }
     glutInit( argc, argv );
-    glutInitWindowSize( 332, 50 );
-    glutInitWindowPosition( 200, 50 );
+    glutInitWindowSize( w_width, w_height );
+    glutInitWindowPosition( 0, 0 );
     glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
     glutCreateWindow( "libimage test" );
     glutReshapeFunc( system_resize );
     glutDisplayFunc( system_render );
+    glutTimerFunc( 30, system_redraw, 0 );
+    sw = glutGet( GLUT_SCREEN_WIDTH );
+	sh = glutGet( GLUT_SCREEN_HEIGHT );
+    glutPositionWindow( ( sw - w_width ) / 2, ( sh - w_height ) / 2 );
     system_opengl();
     glutMainLoop();
 }
@@ -60,10 +67,9 @@ void system_opengl( void )
 
 void system_render( void )
 {
-	float n2 = img.height / h;
-	float n1 = img.width / w;
+	float n2 = (float) img.height / w_height;
+	float n1 = (float) img.width / w_width;
 
-    usleep( (1.0 / 60.0) * 1000000 );
     glClear( GL_COLOR_BUFFER_BIT );
     glLoadIdentity();
     glBegin( GL_QUADS );
@@ -79,10 +85,16 @@ void system_render( void )
     glutSwapBuffers();
 }
 
+void system_redraw( int value )
+{
+    system_render();
+    glutTimerFunc( 30, system_redraw, 0 );
+}
+
 void system_resize( const int width, const int height )
 {
     float a = width / (float) height;
-    w = (float) width; h = (float) height;
+    w_width = width; w_height = height;
 
     glViewport( 0, 0, width, height );
     glMatrixMode( GL_PROJECTION );
