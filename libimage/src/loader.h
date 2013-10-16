@@ -17,5 +17,6 @@ enum {
 
 void img_debug( uint8 param );
 uint8 img_load( char *filename, image_t *img );
+uint8 img_close( image_t *img );
 
 #endif

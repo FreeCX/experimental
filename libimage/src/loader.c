@@ -54,3 +54,8 @@ uint8 img_load( char *filename, image_t *img )
 	fclose( f );
 	return status;
 }
+
+uint8 img_close( image_t *img )
+{
+	free( img->data );
+}
