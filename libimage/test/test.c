@@ -11,7 +11,7 @@ void system_render( void );
 void system_resize( const int width, const int height );
 void system_destroy( void );
 
-char def[] = "../img/image.pcx";
+char def[] = "../img/image.bmp";
 char *img_file;
 image_t img;
 float w, h;
@@ -38,6 +38,7 @@ void system_init( int *argc, char *argv[] )
 
 void system_destroy( void )
 {
+    img_close( &img );
     free( img_file );
 }
 
