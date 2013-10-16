@@ -3,6 +3,7 @@
 
 #include "data.h"
 
+#pragma pack(1)
 struct bmp_fmt {
     uint16 magic;               // magic number 'BM'
     uint32 file_size;           // size of bmp file
@@ -21,6 +22,7 @@ struct bmp_fmt {
     uint32 colors;              // important colors
 };
 typedef struct bmp_fmt bmp_fmt_t;
+#pragma pack(8)
 
 extern uint8 __DEBUG_FLAG__;
 
