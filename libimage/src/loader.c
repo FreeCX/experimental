@@ -43,6 +43,7 @@ uint8 img_load( char *filename, image_t *img )
 			return STATUS_FAILED;
 		case FORMAT_BMP:
 			status = bmp_load( f, img );
+			break;
 		case FORMAT_PCX:
 			status = pcx_load( f, img );
 			break;
