@@ -16,17 +16,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_b_add_clicked();
-
     void on_pushButton_clicked();
 
     void on_list_clicked(const QModelIndex &index);
-
-    void on_list_pressed(const QModelIndex &index);
-
-    void on_list_activated(const QModelIndex &index);
-
-    void on_list_currentRowChanged(int currentRow);
 
 private:
     Ui::MainWindow *ui;

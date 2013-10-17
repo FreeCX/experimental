@@ -11,7 +11,7 @@ char file_list[] = "anime-list";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    list_t *p = base;
+    list_t *p;
     base = list_load( file_list );
     p = base;
     ui->setupUi(this);
@@ -30,11 +30,6 @@ MainWindow::~MainWindow()
 {
     list_clean( base );
     delete ui;
-}
-
-void MainWindow::on_b_add_clicked()
-{
-    // some code
 }
 
 void MainWindow::on_pushButton_clicked()
