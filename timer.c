@@ -99,9 +99,9 @@ int main( void )
     int count = 0;
 
     timer_init();
-    timer_set( 1000, f1 );
-    timer_set( 1001, f2 );
-    while ( 1 ) {
+    timer_set( 10, f1 );
+    timer_set( 11, f2 );
+    while ( count < 25 ) {
         count++;
         usleep( 1000 );
     }
