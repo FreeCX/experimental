@@ -4,7 +4,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/time.h>
-
+   
 typedef unsigned int uint32;
 
 struct w_timer {
@@ -39,18 +39,21 @@ void timer_init( void )
     delay.it_interval.tv_sec = 0;
     delay.it_interval.tv_usec = 1000;
     setitimer( ITIMER_REAL, &delay, NULL );
-    p = (w_timer_t *) malloc( sizeof(w_timer_t) );
-    p->next = NULL;
 }
 
 void timer_loop( int signo )
 {
     static uint32 a, b;
     w_timer_t *t = p;
+
     a = b;
     b = weTicks();
     while ( t != NULL ) {
-        t->count += b - a;
+        if ( b - a > 1000 ) {
+            t->count++;
+        } else {
+            t->count += b - a;
+        }
         if ( t->count >= t->usec ) {
             t->count = 0;
             t->func();
@@ -67,7 +70,7 @@ void timer_set( uint32 usec, void (*func)(void) )
     c->usec = usec;
     c->func = func;
     c->next = p;
-    p = a;
+    p = c;
 }
 
 void timer_destroy( void )
@@ -97,7 +100,7 @@ int main( void )
 
     timer_init();
     timer_set( 1000, f1 );
-    timer_set( 1100, f2 );
+    timer_set( 1001, f2 );
     while ( 1 ) {
         count++;
         usleep( 1000 );
