@@ -6,10 +6,11 @@
 #include <sys/time.h>
    
 typedef unsigned int uint32;
+typedef unsigned long int uint64;
 
 struct w_timer {
-    uint32 usec;
-    uint32 count;
+    uint64 nsec;
+    uint64 count;
     void (*func)(void);
     struct w_timer *next;
 };
@@ -17,16 +18,17 @@ typedef struct w_timer w_timer_t;
 
 void timer_init( void );
 void timer_loop( int signo );
-void timer_set( uint32 usec, void (*f)(void) );
+void timer_set( uint64 nsec, void (*f)(void) );
 void timer_destroy( void );
 
 w_timer_t *p = NULL;
+short n = 0, m = 0;
 
-uint32 weTicks( void )
+uint64 weTicks( void )
 {
-    struct timeval tv;
-    gettimeofday( &tv, 0 );
-    return ( tv.tv_sec * 1000 + tv.tv_usec / 1000 );
+    struct timespec tp;
+    clock_gettime( CLOCK_REALTIME, &tp );
+    return tp.tv_nsec;
 }
 
 void timer_init( void )
@@ -37,37 +39,37 @@ void timer_init( void )
     delay.it_value.tv_sec = 0;
     delay.it_value.tv_usec = 1;
     delay.it_interval.tv_sec = 0;
-    delay.it_interval.tv_usec = 1000;
+    delay.it_interval.tv_usec = 5;
     setitimer( ITIMER_REAL, &delay, NULL );
 }
 
 void timer_loop( int signo )
 {
-    static uint32 a, b;
+    static uint64 a = 0, b = 0;
     w_timer_t *t = p;
 
     a = b;
     b = weTicks();
     while ( t != NULL ) {
-        if ( b - a > 1000 ) {
-            t->count++;
+        if ( a == 0 ) {
+            continue;
         } else {
             t->count += b - a;
         }
-        if ( t->count >= t->usec ) {
-            t->count = 0;
+        if ( t->count >= t->nsec ) {
             t->func();
+            t->count = 0;
         }
         t = t->next;
     }
 }
 
-void timer_set( uint32 usec, void (*func)(void) )
+void timer_set( uint64 nsec, void (*func)(void) )
 {
     w_timer_t *a = p, *c;
 
     c = (w_timer_t *) malloc( sizeof(w_timer_t) );
-    c->usec = usec;
+    c->nsec = nsec;
     c->func = func;
     c->next = p;
     p = c;
@@ -86,12 +88,12 @@ void timer_destroy( void )
 
 void f1( void )
 {
-    printf( "hello " );
+    n++;
 }
 
 void f2( void )
 {
-    printf( "world!\n" );
+    m++;
 }
 
 int main( void )
@@ -99,11 +101,11 @@ int main( void )
     int count = 0;
 
     timer_init();
-    timer_set( 10, f1 );
-    timer_set( 11, f2 );
-    while ( count < 25 ) {
+    timer_set( 1, f2 );
+    timer_set( 1, f1 );
+    while ( count < 1 ) {
         count++;
-        usleep( 1000 );
     }
     timer_destroy();
+    printf( "n = %u\nm = %u\n", n, m );
 }
