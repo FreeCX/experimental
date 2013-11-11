@@ -30,7 +30,7 @@ uint8 img_load( char *filename, image_t *img )
 		return STATUS_FAILED;
 	}
 	if ( __DEBUG_FLAG__ ) {
-		printf( "loaded image: %s\n", filename );
+		printf( "image: %s\n", filename );
 	}
 	for ( i = 1; i < fmt_size; i++ ) {
 		if ( strstr( filename, formats[i-1] ) ) {
