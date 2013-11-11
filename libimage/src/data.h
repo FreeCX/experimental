@@ -19,9 +19,11 @@ typedef unsigned long int uint64;   // size = 8
 
 #define STATUS_SUCCESS              0
 #define STATUS_FAILED               1
-#define IMAGE_MONO                  1
-#define IMAGE_RGB                   3
-#define IMAGE_RGBA                  4
+
+#define IMG_RGB 					GL_RGB
+#define IMG_BGR						GL_BGR
+#define IMG_RGBA 					GL_RGBA
+#define IMG_BGRA					GL_BGRA
 
 struct image {
 	uint32 c_format;
@@ -31,12 +33,12 @@ struct image {
 };
 typedef struct image image_t;
 
-// inline uint16 bswap16( uint16 input );
-// inline uint32 bswap32( uint32 input );
-// inline uint64 bswap64( uint64 input );
-// inline void swap8( uint8 *a, uint8 *b );
-// inline void swap16( uint16 *a, uint16 *b );
-// inline void swap32( uint32 *a, uint32 *b );
+inline uint16 bswap16( uint16 input );
+inline uint32 bswap32( uint32 input );
+inline uint64 bswap64( uint64 input );
+inline void swap8( uint8 *a, uint8 *b );
+inline void swap16( uint16 *a, uint16 *b );
+inline void swap32( uint32 *a, uint32 *b );
 inline size_t fsize( FILE *f );
 
 // inline uint16 lsb16( uint16 a );
