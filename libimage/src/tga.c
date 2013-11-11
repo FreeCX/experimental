@@ -1,18 +1,18 @@
 #include "tga.h"
 
 char tga_info_01[] = 
-	"tga.id_length        = %u\n"
-	"tga.color_map        = %u\n"
-	"tga.img_type         = %u\n"
-	"tga.cmap.entry_index = %u\n"
-	"tga.cmap.length      = %u\n"
-	"tga.cmap.entry_size  = %u\n"
-	"tga.imgs.x_origin    = %u\n"
-	"tga.imgs.y_origin    = %u\n"
-	"tga.imgs.img_width   = %u\n"
-	"tga.imgs.img_height  = %u\n"
-	"tga.imgs.img_depth   = %u\n"
-	"tga.imgs.img_descr   = %u\n";
+	"tga.id_length   = %u\n"
+	"tga.color_map   = %u\n"
+	"tga.img_type    = %u\n"
+	"tga.entry_index = %u\n"
+	"tga.length      = %u\n"
+	"tga.entry_size  = %u\n"
+	"tga.x_origin    = %u\n"
+	"tga.y_origin    = %u\n"
+	"tga.img_width   = %u\n"
+	"tga.img_height  = %u\n"
+	"tga.img_depth   = %u\n"
+	"tga.img_descr   = %u\n";
 
 void tga_info( tga_fmt_t *h )
 {
@@ -24,7 +24,7 @@ void tga_info( tga_fmt_t *h )
 int8 tga_load( FILE *f, image_t *img )
 {
 	tga_fmt_t h;
-	uint32 xsize, ysize, image_size, i;
+	uint32 xsize, ysize, image_size, i, j;
 	uint8 header[sizeof(tga_fmt_t)], depth;
 	uint8 *data;
 
@@ -37,15 +37,16 @@ int8 tga_load( FILE *f, image_t *img )
 	ysize = h.img_height;
 	depth = h.img_depth;
 	if ( depth != 8 && depth != 24 && depth != 32 ) {
+		img_module_error( "image depth is not multiple 8, 16 or 24 bits!" );
 		return EXIT_FAILURE;
 	}
 	depth /= 8;
 	image_size = xsize * ysize * depth;
 	switch ( h.img_type ) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
+		case 0: // none
+		case 1: // indexed
+		case 2: // rgb
+		case 3: // grey
 			data = (uint8 *) malloc( image_size * sizeof(uint8) );
 			fread( data, image_size, 1, f );
 			img->data = data;
@@ -53,19 +54,45 @@ int8 tga_load( FILE *f, image_t *img )
 			img->width = xsize;
 			img->height = ysize;
 			break;
+		// case +8: // rle packed
+		//	break;
 		default:
-			img_module_error( "tga image type %u not supported", h.img_type );
+			img_module_error( "tga image type %u not supported!", h.img_type );
 			break;
 	}
+	if ( h.y_origin == ysize ) {
+		uint16 line_c = 0;
+		i = j = 0;
+		do { 
+			swap8( &data[i], &data[ xsize * depth * ( ysize - line_c - 1 ) + j] );
+			if ( j > depth * ( xsize - 1 ) + 1 ) {
+				j = 0;
+				line_c++;
+			} else {
+				j++;
+			}
+		} while ( ++i < xsize * ysize * depth / 2 );
+	}
+	// if ( h.x_origin == xsize ) {
+	// 	uint16 line_c = 0;
+	// 	i = j = 0;
+	// 	do {
+	// 		if ( i % ( xsize * depth / 2 ) == 0 ) {
+	// 			i += xsize * depth / 2;
+	// 			line_c++;
+	// 		}
+	// 		swap8( &data[i], &data[ xsize * depth * (line_c+1) - i] );
+	// 	} while ( ++i < xsize * ysize * depth / 2 );
+	// }
 	switch ( depth ) {
-		case 1:
+		case 1: // mono image
     		img->c_format = GL_LUMINANCE8;
     		break;
-    	case 3:
-    		img->c_format = GL_BGR;
+    	case 3: // bgr image
+    		img->c_format = IMG_BGR;
     		break;
-    	case 4:
-    		img->c_format = GL_RGBA;
+    	case 4: // rgba image
+    		img->c_format = IMG_BGRA;
     		break;
 	}
 	return STATUS_SUCCESS;
