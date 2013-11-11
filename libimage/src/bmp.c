@@ -41,8 +41,8 @@ int8 bmp_load( FILE *f, image_t *img )
 	img->data = (uint8 *) malloc( image_size * sizeof(uint8) );
 	fread( img->data, image_size, 1, f );
 	switch ( h.compression ) {
-		case 0: // BI_RGB
-			img->c_format = GL_RGB;
+		case 0: // BI_BGR
+			img->c_format = GL_BGR;
 			break;
 		case 1: // BI_RLE8
 			break;

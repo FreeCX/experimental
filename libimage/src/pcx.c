@@ -74,19 +74,19 @@ int8 pcx_load( FILE *f, image_t *img )
 		n += count;
 		buffer++;
 	}
-	buffer = malloc( total_bytes * ysize * sizeof(uint8) );
+	buffer = (uint8 *) malloc( total_bytes * ysize * sizeof(uint8) );
 	img->data = buffer;
 	img->bpp = plane * h.bpp / 8;
 	img->width = xsize;
 	img->height = ysize;
 	/* support RGB & RGBA color */
 	switch ( plane ) {
-		case IMAGE_MONO:
+		case 0: // mono image
 			/* not supported */
 			img_module_error( "pcx mono image not supported!" );
 			img->data = data;
 			break;
-		case IMAGE_RGB:
+		case 3: // rgb image
 			for ( n = 0; n < ysize; n++ ) {
 				for ( i = 0; i < xsize; i++ ) {
 					buffer[plane*(i+xsize*(ysize-n-1))+0] = data[i+(0+plane*n)*xsize];
@@ -94,10 +94,10 @@ int8 pcx_load( FILE *f, image_t *img )
 					buffer[plane*(i+xsize*(ysize-n-1))+2] = data[i+(2+plane*n)*xsize];
 				}
 			}
-			img->c_format = GL_RGB;
+			img->c_format = IMG_RGB;
 			img->data = buffer;
 			break;
-		case IMAGE_RGBA:
+		case 4: // rgba image
 			for ( n = 0; n < ysize; n++ ) {
 				for ( i = 0; i < xsize; i++ ) {
 					buffer[plane*(i+xsize*(ysize-n-1))+0] = data[i+(0+plane*n)*xsize];
@@ -106,7 +106,7 @@ int8 pcx_load( FILE *f, image_t *img )
 					buffer[plane*(i+xsize*(ysize-n-1))+3] = data[i+(3+plane*n)*xsize];
 				}
 			}
-			img->c_format = GL_RGBA;
+			img->c_format = IMG_RGBA;
 			img->data = buffer;
 			break;
 	}
