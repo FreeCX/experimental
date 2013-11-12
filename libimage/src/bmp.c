@@ -27,7 +27,7 @@ void bmp_info( bmp_fmt_t *h )
 int8 bmp_load( FILE *f, image_t *img )
 {
 	bmp_fmt_t h;
-	uint16 image_size;
+	uint16 image_size, i;
 
 	memset( &h, 0, sizeof(bmp_fmt_t) );
 	fread( &h, sizeof(bmp_fmt_t), 1, f );
@@ -39,33 +39,37 @@ int8 bmp_load( FILE *f, image_t *img )
 	img->height = h.height;
 	img->bpp = h.planes * h.bpp / 8;
 	img->data = (uint8 *) malloc( image_size * sizeof(uint8) );
+	fseek( f, h.img_offset, SEEK_SET );
 	fread( img->data, image_size, 1, f );
-	switch ( h.compression ) {
-		case 0: // BI_BGR
-			// img->c_format = GL_BGR;
-			break;
-		case 1: // BI_RLE8
-			break;
-		case 2: // BI_RLE4
-			break;
-		case 3: // BI_BITFIELDS
-			break;
-		case 4: // BI_JPEG
-			break;
-		case 5: // BI_PNG
-			break;
-		case 6: // BI_ALPHABITFIELDS
-			break;
-		default:
-			return STATUS_FAILED;
-	}
+	// switch ( h.compression ) {
+	// 	case 0: // BI_BGR
+	// 		break;
+	// 	case 1: // BI_RLE8
+	// 		break;
+	// 	case 2: // BI_RLE4
+	// 		break;
+	// 	case 3: // BI_BITFIELDS
+	// 		break;
+	// 	case 4: // BI_JPEG
+	// 		break;
+	// 	case 5: // BI_PNG
+	// 		break;
+	// 	case 6: // BI_ALPHABITFIELDS
+	// 		break;
+	// 	default:
+	// 		return STATUS_FAILED;
+	// }
 	switch ( img->bpp ) {
 		case 2:
 			break;
 		case 3:
-			img->c_format = GL_RGB;
+			img->c_format = GL_BGR;
 			break;
 		case 4:
+			for ( i = 0; i < image_size; i += 4 ) {
+				swap8( &img->data[i+0], &img->data[i+3] );
+				swap8( &img->data[i+1], &img->data[i+2] );
+			}
 			img->c_format = GL_RGBA;
 			break;
 	}
