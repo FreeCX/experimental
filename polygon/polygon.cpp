@@ -1,10 +1,50 @@
 #include <GL/glut.h>
+#include <cmath>
 
 int w_width = 500;
 int w_height = 500;
 int win_id = 0;
 GLfloat n = 60.0f;
 GLfloat aspect;
+
+static float * vertex = NULL;
+static int segment_g = 16;
+
+void spVertexInit( int segment )
+{
+    int j = 0;
+
+    segment_g = segment;
+    vertex = new float [2*(segment+2)];
+    for ( float i = 0; i <= 360.0f; i += ( 360.0f / segment ) ) {
+        vertex[j++] = cos( i * M_PI / 180.0f);
+        vertex[j++] = sin( i * M_PI / 180.0f);
+    }
+    vertex[j++] = 1.0f;
+    vertex[j++] = 0.0f;
+}
+
+void spDrawCircle3f( float x, float y, float r )
+{
+    GLfloat v[4];
+    glLineWidth( r );
+    glPushMatrix();
+    glTranslatef( x, y, 0 );
+    glScalef( r, r, 0 );
+    glEnableClientState( GL_VERTEX_ARRAY );
+    glVertexPointer( 2, GL_FLOAT, 0, vertex );
+    glDrawArrays( GL_POLYGON, 0, segment_g + 1 );
+    glGetFloatv( GL_CURRENT_COLOR, v );
+    glColor3f( v[0] - 0.15f, v[1] - 0.15f, v[2] - 0.15f );
+    glDrawArrays( GL_LINE_STRIP, 0, segment_g + 1 );
+    glDisableClientState( GL_VERTEX_ARRAY );
+    glPopMatrix();
+}
+
+void spFree( void )
+{
+    delete [] vertex;
+}
 
 void program_init( void )
 {
@@ -16,12 +56,25 @@ void program_init( void )
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+    spVertexInit( 32 );
 }
 
 void program_render( void )
 {
+    const GLfloat A = 15.0f;
+    static GLfloat dt = 0.0f;
+    int k = 8;
+
     glClear( GL_COLOR_BUFFER_BIT );
     glLoadIdentity();
+    do {
+        glColor3f( 0.4f, k / 12.0f, 0.0f );
+        spDrawCircle3f( 0.0f, A*(sin(dt+k)+2), 1.0f );
+        glColor3f( k / 12.0f, 0.4f, 0.f );
+        spDrawCircle3f( 0.0f, A*(sin(dt+k)-2), 1.0f );
+        glRotatef( 22.5f, 0.0f, 0.0f, 1.0f );
+    } while ( --k );
+    dt += 0.1f;
     glutSwapBuffers();
 }
 
@@ -62,6 +115,7 @@ void program_keyboard( unsigned char key, int x, int y )
 
 void program_free( void )
 {
+    spFree();
 }
 
 int main( int argc, char *argv[] )
