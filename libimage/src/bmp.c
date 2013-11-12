@@ -42,7 +42,7 @@ int8 bmp_load( FILE *f, image_t *img )
 	fread( img->data, image_size, 1, f );
 	switch ( h.compression ) {
 		case 0: // BI_BGR
-			img->c_format = GL_BGR;
+			// img->c_format = GL_BGR;
 			break;
 		case 1: // BI_RLE8
 			break;
@@ -58,6 +58,16 @@ int8 bmp_load( FILE *f, image_t *img )
 			break;
 		default:
 			return STATUS_FAILED;
+	}
+	switch ( img->bpp ) {
+		case 2:
+			break;
+		case 3:
+			img->c_format = GL_RGB;
+			break;
+		case 4:
+			img->c_format = GL_RGBA;
+			break;
 	}
 	return STATUS_SUCCESS;
 }
