@@ -10,6 +10,14 @@ GLfloat aspect;
 static float * vertex = NULL;
 static int segment_g = 16;
 
+/* 3 dot illusion (gif) */
+const GLfloat cv[] = {
+    0.9f, 1.0f, 0.0f, 1.0f, 0.7f, 0.0f, 1.0f, 0.4f, 0.0f, 1.0f, 0.0f, 0.0f, 
+    1.0f, 0.0f, 0.4f, 1.0f, 0.0f, 0.7f, 0.9f, 0.0f, 1.0f, 0.5f, 0.0f, 1.0f, 
+    0.1f, 0.0f, 1.0f, 0.0f, 0.4f, 1.0f, 0.0f, 0.6f, 1.0f, 0.0f, 1.0f, 1.0f, 
+    0.0f, 1.0f, 0.6f, 0.0f, 1.0f, 0.4f, 0.1f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 
+};
+
 void spVertexInit( int segment )
 {
     int j = 0;
@@ -26,17 +34,12 @@ void spVertexInit( int segment )
 
 void spDrawCircle3f( float x, float y, float r )
 {
-    GLfloat v[4];
-    glLineWidth( r );
     glPushMatrix();
     glTranslatef( x, y, 0 );
     glScalef( r, r, 0 );
     glEnableClientState( GL_VERTEX_ARRAY );
     glVertexPointer( 2, GL_FLOAT, 0, vertex );
     glDrawArrays( GL_POLYGON, 0, segment_g + 1 );
-    glGetFloatv( GL_CURRENT_COLOR, v );
-    glColor3f( v[0] - 0.15f, v[1] - 0.15f, v[2] - 0.15f );
-    glDrawArrays( GL_LINE_STRIP, 0, segment_g + 1 );
     glDisableClientState( GL_VERTEX_ARRAY );
     glPopMatrix();
 }
@@ -53,6 +56,7 @@ void program_init( void )
     glutPositionWindow( ( sw - w_width ) / 2, ( sh - w_height) / 2 );
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
     glEnable( GL_LINE_SMOOTH );
+    glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST );
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -61,27 +65,37 @@ void program_init( void )
 
 void program_render( void )
 {
+    const int divider = 8;
     const GLfloat A = 15.0f;
     static GLfloat dt = 0.0f;
-    int k = 8;
+    int k;
 
+    dt = dt == M_PI ? 0 : dt;
     glClear( GL_COLOR_BUFFER_BIT );
-    glLoadIdentity();
-    do {
-        glColor3f( 0.4f, k / 12.0f, 0.0f );
-        spDrawCircle3f( 0.0f, A*(sin(dt+k)+2), 1.0f );
-        glColor3f( k / 12.0f, 0.4f, 0.f );
-        spDrawCircle3f( 0.0f, A*(sin(dt+k)-2), 1.0f );
-        glRotatef( 22.5f, 0.0f, 0.0f, 1.0f );
-    } while ( --k );
-    dt += 0.1f;
+    glAccum( GL_LOAD, 1.0f );
+    for ( int i = 0; i < 1000; i++ ) {
+        k = divider;
+        glLoadIdentity();
+        glColor3f( 0.8f, 0.6f, 0.0f );
+        do {
+            glColor3fv( &cv[3*(k-1)+0] );
+            spDrawCircle3f( 0.0f, A*(sin(dt+k)+2), i / 3000.0f + 1.0f );
+            glColor3fv( &cv[3*(k-1)+24] );
+            spDrawCircle3f( 0.0f, A*(sin(dt+k)-2), i / 3000.0f + 1.0f );
+            glRotatef( -22.5f, 0.0f, 0.0f, 1.0f );
+        } while ( --k );
+        dt += 0.0002f;
+        glAccum( GL_ACCUM, 1.0f / i );
+    }
+    glAccum( GL_RETURN, 1.0f );
+    glFlush();
     glutSwapBuffers();
 }
 
 void program_redraw( int value )
 {
     program_render();
-    glutTimerFunc( 30, program_redraw, 0 );
+    glutTimerFunc( 1, program_redraw, 0 );
 }
 
 void program_resize( int width, int height )
