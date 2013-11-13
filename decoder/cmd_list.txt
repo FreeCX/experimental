@@ -1,0 +1,5 @@
+\leftarrow ← 
+\rightarrow → 
+\uparrow ↑ 
+\downarrow ↓ 
+\cdot ∙ 
