@@ -142,7 +142,7 @@ int main( int argc, char *argv[] )
     glutReshapeFunc( program_resize );
     glutDisplayFunc( program_render );
     glutKeyboardFunc( program_keyboard );
-    glutTimerFunc( 30, program_redraw, 0 );
+    glutTimerFunc( 1, program_redraw, 0 );
     program_init();
     glutMainLoop();
     program_free();
