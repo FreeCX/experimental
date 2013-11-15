@@ -27,37 +27,37 @@ void timer_destroy( void );
 w_timer_t *p = NULL;
 short n = 0, m = 0;
 
-#ifdef __WIN32__
-uint32 tp_usec = 5;
-HANDLE hTimer = NULL;
-HANDLE hThread = NULL;
-#endif
+// #ifdef __WIN32__
+// uint32 tp_usec = 5;
+// HANDLE hTimer = NULL;
+// HANDLE hThread = NULL;
+// #endif
 
 uint64 weTicks( void )
 {
-#ifdef __WIN32__
-	uint64 freq, a;
+// #ifdef __WIN32__
+//  uint64 freq, a;
 
-	QueryPerformanceFrequency( (LARGE_INTEGER *) &freq );
-	QueryPerformanceCounter( (LARGE_INTEGER *) &a );
-	return a / freq;
-#elif __linux__
+//  QueryPerformanceFrequency( (LARGE_INTEGER *) &freq );
+//  QueryPerformanceCounter( (LARGE_INTEGER *) &a );
+//  return a / freq;
+// #elif __linux__
     struct timespec tp;
     clock_gettime( CLOCK_REALTIME, &tp );
     return tp.tv_nsec;
-#endif
+// #endif
 }
 
 void timer_init( uint32 usec )
 {
-#ifdef __WIN32__
-	// DWORD id;
+// #ifdef __WIN32__
+//     DWORD id;
 
-	tp_usec = usec;
-	// hTimer = CreateEvent( 0, 1, 0, 0 );
-	// hThread = CreateThread( 0, 0, timer_loop, 0, 0, &id );
-	SetTimer( 0, 1, 5, (TIMERPROC) timer_loop );
-#elif __linux__
+//     tp_usec = usec;
+//     hTimer = CreateEvent( 0, 1, 0, 0 );
+//     hThread = CreateThread( 0, 0, timer_loop, 0, 0, &id );
+//     SetTimer( 0, 1, 5, (TIMERPROC) timer_loop );
+// #elif __linux__
     struct itimerval delay;
 
     signal( SIGALRM, timer_loop );
@@ -66,7 +66,7 @@ void timer_init( uint32 usec )
     delay.it_interval.tv_sec = 0;
     delay.it_interval.tv_usec = usec;
     setitimer( ITIMER_REAL, &delay, NULL );
-#endif
+// #endif
 }
 
 void timer_loop( int signo )
@@ -76,7 +76,7 @@ void timer_loop( int signo )
 
 // #ifdef __WIN32__
 // _the_loop:
-// 	WaitForSingleObject( hTimer, tp_usec );
+//  WaitForSingleObject( hTimer, tp_usec );
 // #endif
     a = b;
     b = weTicks();
@@ -99,7 +99,7 @@ void timer_loop( int signo )
 
 void timer_set( uint64 nsec, void (*func)(void) )
 {
-    w_timer_t *a = p, *c;
+    w_timer_t *c;
 
     c = (w_timer_t *) malloc( sizeof(w_timer_t) );
     c->nsec = nsec;
