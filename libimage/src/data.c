@@ -102,3 +102,12 @@ inline uint8 getbits8( uint8 a, uint8 p, uint8 n )
 {
 	return ( a >> ( p+1-n ) ) & ~( ~0 << n );
 }
+
+inline uint32 dec2bin( uint8 a )
+{
+	uint32 result = 0, n = 0;
+	do {
+		result += ( a % 2 ) * pow( 10, n++ );
+	} while ( ( a /= 2 ) >= 1 );
+	return result;
+}

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
 
@@ -41,9 +42,6 @@ inline void swap16( uint16 *a, uint16 *b );
 inline void swap32( uint32 *a, uint32 *b );
 inline size_t fsize( FILE *f );
 inline uint8 getbits8( uint8 a, uint8 p, uint8 n );
-
-// inline uint16 lsb16( uint16 a );
-// inline uint32 lsb32( uint32 a );
-// inline uint64 lsb64( uint64 a );
+inline uint32 dec2bin( uint8 a );
 
 #endif
