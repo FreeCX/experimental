@@ -23,10 +23,10 @@ void spVertexInit( int segment )
     int j = 0;
 
     segment_g = segment;
-    vertex = new float [2*(segment+2)];
-    for ( float i = 0; i <= 360.0f; i += ( 360.0f / segment ) ) {
-        vertex[j++] = cos( i * M_PI / 180.0f);
-        vertex[j++] = sin( i * M_PI / 180.0f);
+    vertex = new float [2*segment];
+    for ( float i = 0; i <= 180.0f; i += ( 180.0f / (segment-1) ) ) {
+        vertex[j++] = cos( 2*i*M_PI / 179.0f);
+        vertex[j++] = sin( 2*i*M_PI / 179.0f);
     }
     vertex[j++] = 1.0f;
     vertex[j++] = 0.0f;
@@ -73,7 +73,7 @@ void program_render( void )
     dt = dt == M_PI ? 0 : dt;
     glClear( GL_COLOR_BUFFER_BIT );
     glAccum( GL_LOAD, 1.0f );
-    for ( int i = 0; i < 1000; i++ ) {
+    for ( int i = 0; i < 500; i++ ) {
         k = divider;
         glLoadIdentity();
         glColor3f( 0.8f, 0.6f, 0.0f );
