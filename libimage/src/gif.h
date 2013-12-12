@@ -1,6 +1,8 @@
 #ifndef __GIF_H__
 #define __GIF_H__
 
+#include "data.h"
+
 struct gif_block {
 	// Image Descriptor
 	uint8 img_separator;				// Image separator = ','
@@ -27,7 +29,7 @@ struct gif_fmt {
 	// 7 6 5 4 3 2 1 0 (LSB first)
 	uint16 width;						// Raster width in pixels
 	uint16 height;						// Raster height in pixels
-	uint8 pack01;						// |M|  cr |0|pixel|
+	uint8 pack;							// |M|  cr |0|pixel|
 										// M = 1, Global color map follows Descriptor [1bit]
 										// cr+1 = # bits of color resolution [3bit]
 										// null [1bit = 0]
@@ -42,5 +44,11 @@ struct gif_fmt {
 	uint8 gif_terminator;				// Termination of gif file [ 0x3B or ';' ]
 };
 typedef struct gif_fmt gif_fmt_t;
+
+extern uint8 __DEBUG_FLAG__;
+
+void gif_info( gif_fmt_t *h );
+int8 gif_load( FILE *f, image_t *img );
+int8 gif_save( FILE *f, image_t *img );
 
 #endif
