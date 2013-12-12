@@ -2,7 +2,7 @@ PROG=libimage
 DIR_P=src
 SOURCES=$(DIR_P)/data.c $(DIR_P)/error.c $(DIR_P)/loader.c $(DIR_P)/pcx.c \
 	$(DIR_P)/tga.c $(DIR_P)/bmp.c $(DIR_P)/gif.c
-CFLAGS=-O3 -W -Wall
+CFLAGS=-O3 -W -Wall -lm
 LDFLAGS=
 OS=$(shell uname -s)
 ARCH=$(shell uname -m)
