@@ -1,6 +1,7 @@
 PROG=libimage
 DIR_P=src
-SOURCES=$(DIR_P)/data.c $(DIR_P)/error.c $(DIR_P)/loader.c $(DIR_P)/pcx.c $(DIR_P)/tga.c $(DIR_P)/bmp.c
+SOURCES=$(DIR_P)/data.c $(DIR_P)/error.c $(DIR_P)/loader.c $(DIR_P)/pcx.c \
+	$(DIR_P)/tga.c $(DIR_P)/bmp.c $(DIR_P)/gif.c
 CFLAGS=-O3 -W -Wall
 LDFLAGS=
 OS=$(shell uname -s)
