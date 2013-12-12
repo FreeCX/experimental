@@ -1,12 +1,11 @@
 #include "loader.h"
 
 char *formats[] = {
-	".bmp",
-	".pcx",
-	".tga"
+	".bmp", ".pcx",
+	".tga", ".gif"
 };
 uint8 format[] = { 
-	FORMAT_NONE, FORMAT_BMP, FORMAT_PCX, FORMAT_TGA 
+	FORMAT_NONE, FORMAT_BMP, FORMAT_PCX, FORMAT_TGA, FORMAT_GIF 
 };
 size_t fmt_size = sizeof(format);
 
@@ -49,6 +48,9 @@ uint8 img_load( char *filename, image_t *img )
 			break;
 		case FORMAT_TGA:
 			status = tga_load( f, img );
+			break;
+		case FORMAT_GIF:
+			status = gif_load( f, img );
 			break;
 	}
 	fclose( f );

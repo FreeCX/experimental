@@ -4,6 +4,7 @@
 #include "bmp.h"
 #include "pcx.h"
 #include "tga.h"
+#include "gif.h"
 #include "error.h"
 
 extern uint8 __DEBUG_FLAG__;
@@ -12,7 +13,8 @@ enum {
 	FORMAT_NONE,
 	FORMAT_BMP,
 	FORMAT_PCX,
-	FORMAT_TGA
+	FORMAT_TGA,
+	FORMAT_GIF
 };
 
 void img_debug( uint8 param );
