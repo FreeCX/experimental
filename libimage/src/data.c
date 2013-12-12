@@ -97,3 +97,8 @@ inline size_t fsize( FILE *f )
 	fseek( f, pos, SEEK_SET );
 	return size;
 }
+
+inline uint8 getbits8( uint8 a, uint8 p, uint8 n )
+{
+	return ( a >> ( p+1-n ) ) & ~( ~0 << n );
+}
