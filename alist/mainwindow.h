@@ -20,6 +20,10 @@ private slots:
 
     void on_list_clicked(const QModelIndex &index);
 
+    void on_list_currentRowChanged(int currentRow);
+
+    void on_b_change_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

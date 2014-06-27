@@ -23,7 +23,7 @@ void system_init( int *argc, char *argv[] )
     size_t len;
 
     if ( *argc == 2 && ( len = strlen( argv[1] ) ) > 0 ) {
-        img_file = malloc( len );
+        img_file = (char *) malloc( len*sizeof(char) );
         strcpy( img_file, argv[1] );
     } else {
         img_file = def;
