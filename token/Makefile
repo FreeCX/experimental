@@ -1,5 +1,6 @@
 PROG=token
 all:
-	$(CC) $(PROG).c -o $(PROG)
+	$(CC) $(PROG).c -o $(PROG)_C
+	$(CXX) $(PROG).cpp -o $(PROG)_C++
 clean:
-	$(RM) $(PROG) `ls | grep $(PROG).[^c]`
+	$(RM) $(PROG)_*
