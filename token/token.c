@@ -9,8 +9,8 @@ struct token {
 };
 typedef struct token token_t;
 
-char example_str[] = "special!text^=?123;word@number#2";
-char example_del[] = "!^?;@#";
+char example_str[] = "special! text^= ?123;word @ number#2";
+char example_del[] = "!^?;@# ";
 
 void string_copy( char *src, char *dst, size_t start, size_t length )
 {
@@ -58,13 +58,17 @@ token_t *tokenize( char *data, const char *delimeters )
         for ( i = 0; i < del_length; i++ ) {
             if ( data[counter] == delimeters[i] ) {
                 length = counter - start;
-                b = (token_t *) malloc( sizeof(token_t) );
-                b->name = (char *) malloc( length * sizeof(token_t) );
-                string_copy( data, b->name, start, length-1 );
-                b->next = a;
-                a = b;
-                start = counter + 1;
-                break;
+                if ( length > 0 ) {
+                    b = (token_t *) malloc( sizeof(token_t) );
+                    b->name = (char *) malloc( length * sizeof(token_t) );
+                    string_copy( data, b->name, start, length-1 );
+                    b->next = a;
+                    a = b;
+                    start = counter + 1;
+                    break;
+                } else {
+                    start = counter + 1;
+                }
             }
         }
     } while ( data[counter++] != NULL_STR ); 
