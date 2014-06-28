@@ -52,7 +52,7 @@ token_t *tokenize( char *data, const char *delimeters )
 {
     size_t start = 0, counter = 0, length;
     size_t i, del_length = string_length( delimeters );
-    token_t *a = NULL, *b, *c, *head;
+    token_t *a = NULL, *b;
 
     do {
         for ( i = 0; i < del_length; i++ ) {
@@ -66,9 +66,8 @@ token_t *tokenize( char *data, const char *delimeters )
                     a = b;
                     start = counter + 1;
                     break;
-                } else {
-                    start = counter + 1;
                 }
+                start = counter + 1;
             }
         }
     } while ( data[counter++] != NULL_STR ); 
