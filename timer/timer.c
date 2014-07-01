@@ -4,9 +4,9 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#ifdef __WIN32__
-#include <windows.h>
-#endif
+// #ifdef __WIN32__
+// #include <windows.h>
+// #endif
    
 typedef unsigned int uint32;
 typedef unsigned long int uint64;
@@ -25,7 +25,7 @@ void timer_set( uint64 nsec, void (*f)(void) );
 void timer_destroy( void );
 
 w_timer_t *p = NULL;
-short n = 0, m = 0;
+unsigned short n = 0, m = 0;
 
 // #ifdef __WIN32__
 // uint32 tp_usec = 5;
@@ -124,23 +124,21 @@ void timer_destroy( void )
 
 void f1( void )
 {
-    printf( "%d\n", n++ );
+    printf( "n = %u\n", n++ );
 }
 
 void f2( void )
 {
-    m++;
+    printf( "m = %u\n", m++ );
 }
 
 int main( void )
 {
-    int count = 0;
-
-    timer_init( 5 );
-    timer_set( 1, f2 );
-    timer_set( 1, f1 );
+    timer_init( 1000 );
+    timer_set( 1E8, f2 );
+    timer_set( 9E8, f1 );
     while ( 1 ) {
-        count++;
+        usleep( 10000 );
     }
     timer_destroy();
     printf( "n = %u\nm = %u\n", n, m );
