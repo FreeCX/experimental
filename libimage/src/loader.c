@@ -7,6 +7,12 @@ int8 ( *functions[] )( FILE *, image_t * ) = {
     tga_load,
     img_null
 };
+const char *function_list[] = {
+    "bmp",
+    "pcx",
+    "gif",
+    "tga",
+};
 size_t fmt_size = sizeof( functions ) / 8;
 
 void img_debug( uint8 param )
@@ -40,7 +46,12 @@ uint8 img_load( char *filename, image_t *img )
     for ( i = 0; i < fmt_size; i++ ) {
         status = functions[i]( f, img );
         if ( __DEBUG_FLAG__ && status != STATUS_FAILED ) {
-            printf( " > [%lu] @ 0x%p : %s\n", i, functions[i], 
+#ifdef __WIN32__
+        static const char format_string[] = "> run %s function @ 0x%p: %s\n";
+#elif __linux__
+        static const char format_string[] = "> run %s function @ %p : %s\n";
+#endif
+            printf( format_string, function_list[i], functions[i], 
                 img_status_msg( status ) );
         }
         if ( status == STATUS_SUCCESS ) {
