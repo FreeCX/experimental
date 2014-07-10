@@ -27,7 +27,7 @@ int8 img_null( FILE *f, image_t *h )
 uint8 img_load( char *filename, image_t *img )
 {
     FILE *f;
-    size_t i, select = 0;
+    size_t i;
     uint8 status;
 
     if ( ( f = fopen( filename, "r" ) ) == NULL ) {
@@ -40,7 +40,7 @@ uint8 img_load( char *filename, image_t *img )
     for ( i = 0; i < fmt_size; i++ ) {
         status = functions[i]( f, img );
         if ( __DEBUG_FLAG__ && status != STATUS_FAILED ) {
-            printf( " > [%d] @ 0x%p : %s\n", i, functions[i], 
+            printf( " > [%lu] @ 0x%p : %s\n", i, functions[i], 
                 img_status_msg( status ) );
         }
         if ( status == STATUS_SUCCESS ) {
@@ -54,4 +54,5 @@ uint8 img_load( char *filename, image_t *img )
 uint8 img_close( image_t *img )
 {
     free( img->data );
+    return EXIT_SUCCESS;
 }
