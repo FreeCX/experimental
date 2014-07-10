@@ -1,63 +1,57 @@
 #include "loader.h"
 
-char *formats[] = {
-	".bmp", ".pcx",
-	".tga", ".gif"
+int8 ( *functions[] )( FILE *, image_t * ) = {
+    bmp_load,
+    pcx_load,
+    gif_load,
+    tga_load,
+    img_null
 };
-uint8 format[] = { 
-	FORMAT_NONE, FORMAT_BMP, FORMAT_PCX, FORMAT_TGA, FORMAT_GIF 
-};
-size_t fmt_size = sizeof(format);
+size_t fmt_size = sizeof( functions ) / 8;
 
 void img_debug( uint8 param )
 {
-	if ( param ) {
-		__DEBUG_FLAG__ = 1;
-	} else {
-		__DEBUG_FLAG__ = 0;
-	}
+    if ( param ) {
+        __DEBUG_FLAG__ = 1;
+    } else {
+        __DEBUG_FLAG__ = 0;
+    }
+}
+
+int8 img_null( FILE *f, image_t *h )
+{
+    img_send_error( LI_ERROR_UNSUPPORTED_FORMAT );
+    return STATUS_FAILED;
 }
 
 uint8 img_load( char *filename, image_t *img )
 {
-	FILE *f;
-	size_t i, select = 0;
-	uint32 status;
+    FILE *f;
+    size_t i, select = 0;
+    uint8 status;
 
-	if ( ( f = fopen( filename, "r" ) ) == NULL ) {
-		img_send_error( LI_ERROR_OPEN_FILE );
-		return STATUS_FAILED;
-	}
-	if ( __DEBUG_FLAG__ ) {
-		printf( "image: %s\n", filename );
-	}
-	for ( i = 1; i < fmt_size; i++ ) {
-		if ( strstr( filename, formats[i-1] ) ) {
-			select = i;
-		}
-	}
-	switch ( select ) {
-		case FORMAT_NONE:
-			img_send_error( LI_ERROR_UNSUPPORTED_FORMAT );
-			return STATUS_FAILED;
-		case FORMAT_BMP:
-			status = bmp_load( f, img );
-			break;
-		case FORMAT_PCX:
-			status = pcx_load( f, img );
-			break;
-		case FORMAT_TGA:
-			status = tga_load( f, img );
-			break;
-		case FORMAT_GIF:
-			status = gif_load( f, img );
-			break;
-	}
-	fclose( f );
-	return status;
+    if ( ( f = fopen( filename, "r" ) ) == NULL ) {
+        img_send_error( LI_ERROR_OPEN_FILE );
+        return STATUS_FAILED;
+    }
+    if ( __DEBUG_FLAG__ ) {
+        printf( "image: %s\n", filename );
+    }
+    for ( i = 0; i < fmt_size; i++ ) {
+        status = functions[i]( f, img );
+        if ( __DEBUG_FLAG__ && status != STATUS_FAILED ) {
+            printf( " > [%d] @ 0x%p : %s\n", i, functions[i], 
+                img_status_msg( status ) );
+        }
+        if ( status == STATUS_SUCCESS ) {
+            break;
+        }
+    }
+    fclose( f );
+    return status;
 }
 
 uint8 img_close( image_t *img )
 {
-	free( img->data );
+    free( img->data );
 }

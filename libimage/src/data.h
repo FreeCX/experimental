@@ -18,19 +18,24 @@ typedef unsigned short uint16;      // size = 2
 typedef unsigned int uint32;        // size = 4
 typedef unsigned long int uint64;   // size = 8
 
-#define STATUS_SUCCESS              0
-#define STATUS_FAILED               1
+enum {
+    IMG_RGB  = GL_RGB,
+    IMG_BGR  = GL_BGR,
+    IMG_RGBA = GL_RGBA,
+    IMG_BGRA = GL_BGRA
+};
 
-#define IMG_RGB 					GL_RGB
-#define IMG_BGR						GL_BGR
-#define IMG_RGBA 					GL_RGBA
-#define IMG_BGRA					GL_BGRA
+enum {
+    STATUS_FAILED = 0,
+    STATUS_SUCCESS,
+    STATUS_IMG_INCORRECT,
+};
 
 struct image {
-	uint32 c_format;
-	uint8 *data;
-	uint8 bpp;
-	uint32 width, height;
+    uint32 c_format;
+    uint8 *data;
+    uint8 bpp;
+    uint32 width, height;
 };
 typedef struct image image_t;
 

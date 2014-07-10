@@ -10,14 +10,15 @@
 extern uint8 __DEBUG_FLAG__;
 
 enum {
-	FORMAT_NONE,
-	FORMAT_BMP,
-	FORMAT_PCX,
-	FORMAT_TGA,
-	FORMAT_GIF
+    FORMAT_NONE,
+    FORMAT_BMP,
+    FORMAT_PCX,
+    FORMAT_TGA,
+    FORMAT_GIF
 };
 
 void img_debug( uint8 param );
+int8 img_null( FILE *f, image_t *h );
 uint8 img_load( char *filename, image_t *img );
 uint8 img_close( image_t *img );
 

@@ -24,9 +24,12 @@ struct bmp_fmt {
 typedef struct bmp_fmt bmp_fmt_t;
 #pragma pack(8)
 
+#define BMP_MAGIC 0x424D
+
 extern uint8 __DEBUG_FLAG__;
 
 void bmp_info( bmp_fmt_t *h );
+int8 bmp_is_correct( bmp_fmt_t *h );
 int8 bmp_load( FILE *f, image_t *img );
 int8 bmp_save( FILE *f, image_t *img );
 
