@@ -13,7 +13,7 @@ const char *function_list[] = {
     "gif",
     "tga",
 };
-size_t fmt_size = sizeof( functions ) / 8;
+size_t fmt_size = sizeof( functions ) / sizeof( functions[0] );
 
 void img_debug( uint8 param )
 {
