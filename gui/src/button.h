@@ -6,11 +6,11 @@
 typedef void ( *ui_button_callback )();
 
 struct ui_button_flag {
-    unsigned draw     : 1;
-    unsigned click    : 1;
-    unsigned focus    : 1;
-    unsigned enable   : 1;
-    unsigned reserved : 4;
+    uint8 draw     : 1;
+    uint8 click    : 1;
+    uint8 focus    : 1;
+    uint8 enable   : 1;
+    uint8 reserved : 4;
 };
 typedef ui_button_flag_t;
 
