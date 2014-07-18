@@ -1,0 +1,13 @@
+% default gui theme
+
+button.background = #515642
+button.left       = #767a6a
+button.right      = #33362a
+button.top        = #9b9e92
+button.bottom     = #22241c
+button.focus      = #868870
+
+% left-top     = mid( left, top )
+% right-top    = mid( right, top )
+% right-bottom = mid( right, bottom )
+% left-bottom  = mid( left, bottom )
