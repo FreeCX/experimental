@@ -3,6 +3,7 @@
 
 #include "data.h"
 
+#pragma pack( push, 1 )
 struct pcx_fmt {
     uint8   manufacturer;   // Constant Flag, 10 = ZSoft .pcx 
     uint8   version;        // Version information [ 0, 2, 3, 4, 5 ]
@@ -23,6 +24,7 @@ struct pcx_fmt {
     uint16  vscreen_size;   // Vertical screen size in pixels. New field found only in PB IV/IV Plus
     uint8   filler[54];     // Blank to fill out 128 byte header
 };
+#pragma pack( pop )
 typedef struct pcx_fmt pcx_fmt_t;
 
 extern uint8 __DEBUG_FLAG__;

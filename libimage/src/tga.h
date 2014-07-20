@@ -3,7 +3,7 @@
 
 #include "data.h"
 
-#pragma pack(1)
+#pragma pack( push, 1 )
 struct tga_fmt {
     uint8   id_length;              // size of ID field (0 usually)
     uint8   color_map;              // type of color map: 
@@ -21,8 +21,8 @@ struct tga_fmt {
     uint8   img_depth;              // image bits per pixel 8, 16, 24, 32
     uint8   img_descriptor;         // image descriptor bits (vh flip bits)
 };
+#pragma pack( pop )
 typedef struct tga_fmt tga_fmt_t;
-#pragma pack(8)
 
 extern uint8 __DEBUG_FLAG__;
 
