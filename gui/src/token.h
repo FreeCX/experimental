@@ -1,10 +1,6 @@
 #ifndef __UI_TOKEN_H__
 #define __UI_TOKEN_H__
 
-#include <stdlib.h>
-
-#define NULL_STR '\0'
-
 struct token {
     char *name;
     struct token *next;
