@@ -1,6 +1,8 @@
 #include "color.h"
 
-void rgb_to_hsv( unsigned int color, double hsv[3] )
+double set_color[3] = { 0 };
+
+void ui_color_rgb2hsv( const uint32 color, double hsv[3] )
 {
     double rd = (double) ( color >> 16 ) / 255.0;
     double gd = (double) ( ( color >> 8 ) & 0xFF ) / 255.0;
@@ -28,7 +30,7 @@ void rgb_to_hsv( unsigned int color, double hsv[3] )
     hsv[2] = v;
 }
 
-void hsv_to_rgb( unsigned int *color, double hsv[3] )
+void ui_color_hsv2rgb( uint32 *color, double hsv[3] )
 {
     double r, g, b;
     int i = (int)( hsv[0] * 6.0 );
@@ -48,7 +50,7 @@ void hsv_to_rgb( unsigned int *color, double hsv[3] )
     *color = ( (int)( r * 255 ) << 16 ) + ( (int)( g * 255 ) << 8 ) + (int)( b * 255 );
 }
 
-unsigned int calculate_subcolor( unsigned int a, unsigned int b )
+uint32 ui_color_sub( const uint32 a, const uint32 b )
 {
     unsigned int result;
     double c[3], d[3], f[3];
@@ -61,4 +63,30 @@ unsigned int calculate_subcolor( unsigned int a, unsigned int b )
     }
     hsv_to_rgb( &result, f );
     return result;
+}
+
+void ui_color_setu( const uint32 color )
+{
+    set_color[0] = (double) ( color >> 16 ) / 255.0;
+    set_color[1] = (double) ( ( color >> 8 ) & 0xFF ) / 255.0;
+    set_color[2] = (double) ( color & 0xFF ) / 255.0;
+}
+
+void ui_color_setv( double color[3] )
+{
+    memcpy( set_color, color, sizeof( color ) );
+}
+
+void ui_color_set3u( const uint8 red, const uint8 green, const uint8 blue )
+{
+    set_color[0] = (double) red / 255.0;
+    set_color[1] = (double) green / 255.0;
+    set_color[2] = (double) blue / 255.0;
+}
+
+void ui_color_set3f( const float red, const float green, const float blue )
+{
+    set_color[0] = (double) red;
+    set_color[1] = (double) green;
+    set_color[2] = (double) blue;
 }
