@@ -1,11 +1,11 @@
 % default gui theme
 
-button.background = #515642
-button.left       = #767a6a
-button.right      = #33362a
-button.top        = #9b9e92
-button.bottom     = #22241c
-button.focus      = #868870
+button.background_color = #515642
+button.left_color       = #767a6a
+button.right_color      = #33362a
+button.top_color        = #9b9e92
+button.bottom_color     = #22241c
+button.focus_color      = #868870
 
 % left-top     = mid( left, top )
 % right-top    = mid( right, top )
