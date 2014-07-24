@@ -1,5 +1,4 @@
 #include "button.h"
-#include "string.h"
 
 static uint16 global_id = 0;
 ui_button_t *button_list = NULL;
@@ -60,9 +59,23 @@ void ui_button_label( uint16 id, const char *label )
     }
 }
 
-// void ui_button_draw( ui_font *f )
-// {
-// }
+void ui_button_draw( void )
+{
+    ui_button_t *p = button_list
+
+    while ( p != NULL ) {
+        /* testing draw */
+        ui_color_setu( 0x515642 );
+        ui_draw_begin( UI_DRAW_LINE_STRIP );
+        ui_draw_vertex2i( p->x_pos, p->y_pos );
+        ui_draw_vertex2i( p->x_pos + p->width, p->y_pos );
+        ui_draw_vertex2i( p->x_pos + p->width, p->y_pos + p->height );
+        ui_draw_vertex2i( p->x_pos, p->y_pos + p->height );
+        ui_draw_end();
+        /* testing draw */
+        p = p->next;
+    }
+}
 
 void ui_button_destroy( void )
 {
