@@ -1,6 +1,6 @@
 #include "draw.h"
 
-static uint8 element_type = 0;
+static uint8 element_type = UI_DRAW_NONE;
 static uint8 current = 0;
 static float *data = NULL;
 
@@ -27,7 +27,7 @@ void ui_draw_vertex2f( float x, float y )
 
 void ui_draw_end( void )
 {
-    if ( data != NULL ) {
+    if ( data != NULL || current != 0 || element_type != UI_DRAW_NONE ) {
         // input draw code: OpenGL, SDL & etc
         current = 0;
     }

@@ -4,6 +4,7 @@
 #include "data.h"
 
 enum {
+    UI_DRAW_NONE = 0,
     UI_DRAW_POINT,
     UI_DRAW_LINE,
     UI_DRAW_LINE_STRIP
