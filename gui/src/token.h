@@ -11,7 +11,7 @@ struct token {
 };
 typedef struct token token_t;
 
-token_t *tokenize( char *data, const char *delimeters );
+void tokenize( token_t **a, char *data, const char *delimeters );
 void free_token( token_t *data );
 
 #endif
