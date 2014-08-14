@@ -1,54 +1,49 @@
 #include "string.h"
 #include "token.h"
 
-token_t *token_reverse( token_t *data )
-{
-    token_t *curr = data, *next;
-    data = NULL;
-
-    while ( curr != NULL ) {
-        next = curr->next;
-        curr->next = data;
-        data = curr;
-        curr = next;
-    }
-    return data;
-}
-
 token_t *tokenize( char *data, const char *delimeters )
 {
-    size_t start = 0, counter = 0, length;
-    size_t i, del_length = string_length( delimeters );
-    token_t *a = NULL, *b;
+    size_t start = 0, counter = 0, length = 0;
+    size_t del_length = string_length( delimeters );
+    size_t d_length = string_length( data );
+    size_t i, j, n;
+    token_t *a = NULL;
 
+    a = (token_t *) malloc( sizeof( token_t ) );
+    a->size = 0;
+    for ( i = 0; i < d_length; i++ ) {
+        for ( j = 0; j < del_length; j++ ) {
+            if ( data[i] == delimeters[j] ) {
+                a->size++;
+            }
+        }
+    }
+    a->name = (char **) malloc( sizeof( a->size ) * sizeof( char * ) );
     do {
         for ( i = 0; i < del_length; i++ ) {
             if ( data[counter] == delimeters[i] ) {
                 length = counter - start;
                 if ( length > 0 ) {
-                    b = (token_t *) malloc( sizeof(token_t) );
-                    b->name = (char *) malloc( length * sizeof(token_t) );
-                    string_copy_n( data, b->name, start, length-1 );
-                    b->next = a;
-                    a = b;
+                    a->name[n] = (char *) malloc( ( length + 1 ) * sizeof( char ) );
+                    string_copy_n( data, a->name[n], start, length-1 );
                     start = counter + 1;
+                    n++;
                     break;
                 }
                 start = counter + 1;
             }
         }
     } while ( data[counter++] != NULL_STR ); 
-    return token_reverse( a );
+    return a;
 }
 
 void free_token( token_t *data )
 {
-    token_t *a = data, *b;
+    size_t i;
 
-    while ( a != NULL ) {
-        b = a;
-        free( a->name );
-        a = a->next;
-        free( b );
+    for ( i = 0; i < data->size; i++ ) {
+        free( data->name[i] );
     }
+    free( data->name );
+    free( data );
 }
