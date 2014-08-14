@@ -18,7 +18,6 @@ void tokenize( token_t **a, char *data, const char *delimeters )
             }
         }
     }
-    printf( "obj->size = %d\n", obj->size );
     obj->name = (char **) malloc( sizeof( obj->size ) * sizeof( char * ) );
     do {
         for ( i = 0; i < del_length; i++ ) {
