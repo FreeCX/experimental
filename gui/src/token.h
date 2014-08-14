@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#define NULL_STR '\0'
+#define NULL_STR    '\0'
 
 struct token {
     char **name;
