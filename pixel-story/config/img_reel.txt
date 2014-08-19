@@ -1,0 +1,7 @@
+# first line: filename size anim_count
+# next  line: anim_name frame_max frame_rate
+../game_art/img_reel.gif 16 4
+reel01 4 5
+reel02 4 5
+reel03 4 5
+reel04 4 5

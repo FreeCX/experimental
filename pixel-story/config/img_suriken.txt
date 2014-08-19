@@ -1,0 +1,7 @@
+# first line: filename size anim_count
+# next  line: anim_name frame_max frame_rate
+../game_art/img_suriken.gif 16 4
+sur01 4 5
+sur02 4 5
+sur03 4 5
+sur04 4 5

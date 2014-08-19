@@ -1,0 +1,12 @@
+# first line: filename size anim_count
+# next  line: anim_name frame_max frame_rate
+../game_art/img_monitor.gif 16 9
+mon_sin_01 14 2
+mon_sin_02 14 2
+mon_blink 11 3
+mon_sin2_01 8 2
+mon_sin2_02 8 2
+mon_sin2_03 8 2
+mon_sin2_04 8 2
+mon_data 7 5
+mon_cur 2 50
