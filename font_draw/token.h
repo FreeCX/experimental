@@ -3,15 +3,15 @@
 
 #include <stdlib.h>
 
-#define NULL_STR '\0'
+#define NULL_STR    '\0'
 
 struct token {
-    char *name;
-    struct token *next;
+    char **name;
+    unsigned int size;
 };
 typedef struct token token_t;
 
-token_t *tokenize( char *data, const char *delimeters );
+void tokenize( token_t **a, char *data, const char *delimeters );
 void free_token( token_t *data );
 
 #endif

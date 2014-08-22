@@ -4,7 +4,7 @@
 SDL_Window *window;
 SDL_Renderer *render;
 SDL_Event event;
-int quit_flag = 0;
+short quit_flag = 0;
 font_table_t *ft = NULL;
 
 wchar_t example_text[] =
@@ -32,24 +32,20 @@ int font_load( SDL_Renderer *r, font_table_t **t, const char *font )
     token_t *token;
     int id = 0;
 
-    a = (font_table_t *) calloc( 1, sizeof(font_table_t) );
+    a = (font_table_t *) calloc( 1, sizeof( font_table_t ) );
     *t = a;
     f = fopen( font, "rb" );
     if ( f == NULL ) {
         return A_ERROR_OPEN_FILE;
     }
-
-    /* BAD CODE: NEED A BETTER! */
     do {
         load = fread( &buffer[i], 1, 1, f );
     } while ( buffer[i++] != '\0' );
-    token = tokenize( buffer, " " );
-    strcpy( tex_name, token->name );
-    a->t_width = atoi( token->next->name );
-    a->t_height = atoi( token->next->next->name );
+    tokenize( &token, buffer, " " );
+    strcpy( tex_name, token->name[0] );
+    a->t_width = atoi( token->name[1] );
+    a->t_height = atoi( token->name[2] );
     free_token( token );
-    /* BAD CODE: NEED A BETTER! */
-
     printf( "%s [ %dx%d ]\n", tex_name, a->t_width, a->t_height );
     tex = IMG_LoadTexture( r, tex_name );
     a->font = tex;
@@ -62,8 +58,7 @@ int font_load( SDL_Renderer *r, font_table_t **t, const char *font )
         load = fread( &current, 2, 1, f );
         if ( current != L'\n' && current < 0xFFFF && load != 0 ) {
             a->table[current] = id++;
-            printf( "id: %02d [%lc:%d] : %u\n", a->table[current], current, 
-                current, (unsigned int) load );
+            printf( "id: %02d [%lc:%d] : %u\n", a->table[current], current, current, (unsigned int) load );
         }
     } while ( load != 0 );
     fclose( f );
@@ -78,8 +73,7 @@ void font_destroy( font_table_t *t )
 
 void font_color( font_table_t *t, Uint32 color )
 {
-    SDL_SetTextureColorMod( t->font, 
-        color >> 16, ( color >> 8 ) & 0xFF, color & 0xFF );
+    SDL_SetTextureColorMod( t->font, color >> 16, ( color >> 8 ) & 0xFF, color & 0xFF );
 }
 
 void font_draw( SDL_Renderer *r, font_table_t *t, const wchar_t *text, int x, int y )
@@ -119,13 +113,12 @@ void font_draw( SDL_Renderer *r, font_table_t *t, const wchar_t *text, int x, in
 
 void game_init( void )
 {
-    window = SDL_CreateWindow( "Font Test", SDL_WINDOWPOS_CENTERED, 
-        SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+    window = SDL_CreateWindow( "Font Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+                               SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
     if ( window == NULL ) {
         send_error( EXIT_FAILURE );
     }
-    render = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | 
-        SDL_RENDERER_PRESENTVSYNC );
+    render = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
     if ( render == NULL ) {
         send_error( EXIT_FAILURE );
     }
@@ -141,12 +134,8 @@ void game_event( SDL_Event *event )
         case SDL_QUIT:
             quit_flag = 1;
             break;
+        default:
     }
-}
-
-void game_loop( void )
-{
-    // code
 }
 
 void game_render( void )
@@ -170,9 +159,8 @@ int main( int argc, char *argv[] )
 {
     setlocale( LC_CTYPE, "" );
     game_init();
-    while ( !quit_flag ) {
+    while ( quit_flag == 1 ) {
         game_event( &event );
-        game_loop();
         game_render();
     }
     game_destroy();
