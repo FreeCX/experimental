@@ -5,35 +5,34 @@
 std::string example_str = "special! text^= ?123;word @ number#2";
 std::string example_del = "!^?;@# ";
 
-std::vector<std::string> tokenize( std::string data, std::string delimeters )
+void tokenize( std::vector<std::string> & token, const std::string & data, const std::string & delimeters )
 {
-    size_t start = 0, counter = 0, length;
-    size_t i, del_length = delimeters.length() + 1;
-    size_t d_length = data.length();
-    std::vector<std::string> a;
+    size_t del_length = delimeters.length() + 1;
+    size_t dat_length = data.length() + 1;
+    size_t i, j, prev, next;
 
-    do {
-        for ( i = 0; i < del_length; i++ ) {
-            if ( data[counter] == delimeters[i] ) {
-                length = counter - start;
-                if ( length > 0 ) {
-                    a.push_back( std::string( data, start, length ) );
-                    start = counter + 1;
+    prev = next = 0;
+    for ( i = 0; i < dat_length; i++ ) {
+        for ( j = 0; j < del_length; j++ ) {
+            if ( data[i] == delimeters[j] ) {
+                if ( next - prev >= 1 ) {
+                    token.push_back( std::string( data, prev, next - prev ) );
+                    prev = next + 1;
                     break;
                 }
-                start = counter + 1;
+                prev = next + 1;
             }
         }
-    } while ( counter++ <= d_length ); 
-    return a;
+        next++;
+    }
 }
 
 int main( void )
 {
-    std::vector<std::string> a;
+    std::vector<std::string> token;
 
-    a = tokenize( example_str, example_del );
-    for ( size_t i = 0; i < a.size(); i++ ) {
-        std::cout << "token: " << a[i] << std::endl;
+    tokenize( token, example_str, example_del );
+    for ( size_t i = 0; i < token.size(); i++ ) {
+        std::cout << "token: " << token[i] << std::endl;
     }
 }
