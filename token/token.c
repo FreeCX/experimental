@@ -5,18 +5,18 @@
 
 struct token {
     char **name;
-    unsigned int size;
+    size_t size;
 };
 typedef struct token token_t;
 
-char example_str[] = "special! text^= ?123;word @ number#2";
-char example_del[] = "!^?;@# ";
+const char example_str[] = "special! text^= ?123;word @ number#2";
+const char example_del[] = "!^?;@# ";
 
-void string_copy_n( char *src, char *dst, size_t start, size_t length )
+void string_copy_n( const char *src, char *dst, size_t start, size_t length )
 {
     size_t i = 0;
 
-    while ( ( dst[i] = src[i+start] ) != NULL_STR && ++i <= length );
+    while ( ( dst[i] = src[i+start] ) != NULL_STR && i <= length ) { i++; }
     dst[i] = NULL_STR;
 }
 
@@ -24,49 +24,48 @@ size_t string_length( const char *src )
 {
     size_t i = 1;
 
-    while ( src[i++] != NULL_STR );
-    return i;
+    while ( src[i] != NULL_STR ) { i++; }
+    return ++i;
 }
 
-void tokenize( token_t **a, char *data, const char *delimeters )
+void tokenize( token_t **a, const char *data, const char *delimeters )
 {
-    size_t start = 0, counter = 0, length = 0, n = 0;
     size_t del_length = string_length( delimeters );
     size_t dat_length = string_length( data );
-    size_t prev, next;
+    size_t prev, next, n;
     size_t i, j;
     token_t *obj = NULL;
 
     obj = (token_t *) malloc( sizeof( token_t ) );
-    obj->size = next = 0;
-    prev = -1;
+    obj->size = next = prev = 0;
     for ( i = 0; i < dat_length; i++ ) {
         for ( j = 0; j < del_length; j++ ) {
             if ( data[i] == delimeters[j] ) {
-                if ( next - prev > 1 ) {
+                if ( next - prev >= 1 ) {
                     obj->size++;
                 }
-                prev = next;
+                prev = next + 1;
             }
         }
         next++;
     }
     obj->name = (char **) malloc( sizeof( obj->size ) * sizeof( char * ) );
-    do {
-        for ( i = 0; i < del_length; i++ ) {
-            if ( data[counter] == delimeters[i] ) {
-                length = counter - start;
-                if ( length > 0 ) {
-                    obj->name[n] = (char *) malloc( ( length + 1 ) * sizeof( char ) );
-                    string_copy_n( data, obj->name[n], start, length-1 );
-                    start = counter + 1;
+    next = prev = n = 0;
+    for ( i = 0; i < dat_length; i++ ) {
+        for ( j = 0; j < del_length; j++ ) {
+            if ( data[i] == delimeters[j] ) {
+                if ( next - prev >= 1 ) {
+                    obj->name[n] = (char *) malloc( ( next - prev + 1 ) * sizeof( char ) );
+                    string_copy_n( data, obj->name[n], prev, next - prev - 1 );
+                    prev = next + 1;
                     n++;
                     break;
                 }
-                start = counter + 1;
+                prev = next + 1;
             }
         }
-    } while ( data[counter++] != NULL_STR ); 
+        next++;
+    }
     *a = obj;
 }
 
