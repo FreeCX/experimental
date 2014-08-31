@@ -9,6 +9,8 @@
 
 extern uint8 __DEBUG_FLAG__;
 
+void img_info( void );
+void img_version( uint8 *major, uint8 *minor );
 void img_debug( uint8 param );
 int8 img_null( FILE *f, image_t *h );
 uint8 img_load( char *filename, image_t *img );

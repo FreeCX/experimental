@@ -1,10 +1,12 @@
 EXPORTS
-	img_debug		@1
-	img_load		@2
-	img_close		@3
-	pcx_load		@4
-	pcx_save		@5
-	tga_load		@6
-	tga_save		@7
-	bmp_load		@8
-	bmp_save		@9
+    img_info        @1
+    img_version     @2
+	img_debug		@3
+	img_load		@4
+	img_close		@5
+	pcx_load		@6
+	pcx_save		@7
+	tga_load		@8
+	tga_save		@9
+	bmp_load		@10
+	bmp_save		@11

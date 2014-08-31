@@ -1,5 +1,10 @@
 #include "loader.h"
 
+uint8 v_img_major = 0;
+uint8 v_img_minor = 1;
+uint8 v_img_build = 0; 
+char  v_release[] = "alpha";
+
 int8 ( *functions[] )( FILE *, image_t * ) = {
     bmp_load,
     pcx_load,
@@ -15,13 +20,21 @@ const char *function_list[] = {
 };
 size_t fmt_size = sizeof( functions ) / sizeof( functions[0] );
 
+void img_info( void )
+{
+    printf( "> libimage %d.%d.%d '%s'\n> build info: %s %s\n", v_img_major, v_img_minor, v_img_build, v_release, 
+            __TIME__, __DATE__ );
+}
+
+void img_version( uint8 *major, uint8 *minor )
+{
+    *major = v_img_major;
+    *minor = v_img_minor;
+}
+
 void img_debug( uint8 param )
 {
-    if ( param ) {
-        __DEBUG_FLAG__ = 1;
-    } else {
-        __DEBUG_FLAG__ = 0;
-    }
+    __DEBUG_FLAG__ = ( param == 1 ) ? 1 : 0;
 }
 
 int8 img_null( FILE *f, image_t *h )
@@ -32,9 +45,14 @@ int8 img_null( FILE *f, image_t *h )
 
 uint8 img_load( char *filename, image_t *img )
 {
-    FILE *f;
-    size_t i;
+#ifdef __WIN32__
+    static const char format_string[] = "> run %s function @ 0x%p: %s\n";
+#elif __linux__
+    static const char format_string[] = "> run %s function @ %p : %s\n";
+#endif
     uint8 status;
+    size_t i;
+    FILE *f;
 
     if ( ( f = fopen( filename, "r" ) ) == NULL ) {
         img_send_error( LI_ERROR_OPEN_FILE );
@@ -46,13 +64,7 @@ uint8 img_load( char *filename, image_t *img )
     for ( i = 0; i < fmt_size; i++ ) {
         status = functions[i]( f, img );
         if ( __DEBUG_FLAG__ && status != STATUS_FAILED ) {
-#ifdef __WIN32__
-        static const char format_string[] = "> run %s function @ 0x%p: %s\n";
-#elif __linux__
-        static const char format_string[] = "> run %s function @ %p : %s\n";
-#endif
-            printf( format_string, function_list[i], functions[i], 
-                img_status_msg( status ) );
+            printf( format_string, function_list[i], functions[i], img_status_msg( status ) );
         }
         if ( status == STATUS_SUCCESS ) {
             break;
