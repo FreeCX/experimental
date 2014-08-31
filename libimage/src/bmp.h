@@ -2,6 +2,7 @@
 #define __BMP_H__
 
 #include "data.h"
+#include "error.h"
 
 #pragma pack( push, 1 )
 struct bmp_fmt {

@@ -13,26 +13,24 @@ const char gif_info_01[] =
 
 void gif_info( gif_fmt_t *h )
 {
-    int8 i;
     int16 color_type, color, sort_flag, size;
+    uint8 i;
 
     printf( "gif.signature  = " );
     for ( i = 0; i < 6; i++ ) {
-        printf( "%c", h->signature[i] );
+        putchar( h->signature[i] );
     }
-    printf( "\n" );
+    putchar( '\n' );
     color_type = getbits8( h->pack, 7, 1 );
     color = getbits8( h->pack, 6, 3 );
     sort_flag = getbits8( h->pack, 3, 1 );
     size = getbits8( h->pack, 2, 3 );
-    printf( gif_info_01, h->width, h->height, h->pack, color_type, 
-        color, sort_flag, size, h->background, h->reserved );
+    printf( gif_info_01, h->width, h->height, h->pack, color_type, color, sort_flag, size, h->background, h->reserved );
 }
 
 int8 gif_is_correct( gif_fmt_t *h )
 {
-    if ( h->signature[0] != 'G' && h->signature[1] != 'I' && 
-         h->signature[2] != 'F' ) {
+    if ( h->signature[0] != 'G' && h->signature[1] != 'I' && h->signature[2] != 'F' ) {
         return STATUS_IMG_INCORRECT;
     }
     return STATUS_SUCCESS;

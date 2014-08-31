@@ -2,6 +2,7 @@
 #define __PCX_H__
 
 #include "data.h"
+#include "error.h"
 
 #pragma pack( push, 1 )
 struct pcx_fmt {

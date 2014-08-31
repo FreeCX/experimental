@@ -19,9 +19,9 @@ const char bmp_info_01[] =
 
 void bmp_info( bmp_fmt_t *h )
 {
-    printf( bmp_info_01, h->magic, h->file_size, h->reserved, h->img_offset, 
-        h->dib_size, h->width, h->height, h->planes, h->bpp, h->compression,
-        h->data_size, h->h_resolution, h->v_resolution, h->palette, h->colors );
+    printf( bmp_info_01, h->magic, h->file_size, h->reserved, h->img_offset, h->dib_size, h->width, h->height, 
+            h->planes, h->bpp, h->compression, h->data_size, h->h_resolution, h->v_resolution, h->palette, 
+            h->colors );
 }
 
 int8 bmp_is_correct( bmp_fmt_t *h )
@@ -34,8 +34,9 @@ int8 bmp_is_correct( bmp_fmt_t *h )
 
 int8 bmp_load( FILE *f, image_t *img )
 {
+    uint16 image_size;
     bmp_fmt_t h;
-    uint16 image_size, i;
+    size_t i;
 
     memset( &h, 0, sizeof( bmp_fmt_t ) );
     fread( &h, sizeof( bmp_fmt_t ), 1, f );
@@ -90,5 +91,6 @@ int8 bmp_load( FILE *f, image_t *img )
 
 int8 bmp_save( FILE *f, image_t *img )
 {
+    // input code here
     return STATUS_SUCCESS;
 }

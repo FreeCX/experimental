@@ -16,25 +16,24 @@ const char tga_info_01[] =
 
 void tga_info( tga_fmt_t *h )
 {
-    printf( tga_info_01, h->id_length, h->color_map, h->img_type, h->entry_index, 
-        h->length, h->entry_size, h->x_origin, h->y_origin,
-        h->img_width, h->img_height, h->img_depth, h->img_descriptor );
+    printf( tga_info_01, h->id_length, h->color_map, h->img_type, h->entry_index, h->length, h->entry_size, 
+            h->x_origin, h->y_origin, h->img_width, h->img_height, h->img_depth, h->img_descriptor );
 }
 
 int8 tga_is_correct( tga_fmt_t *h )
 {
-    // if ( h->img_depth != 8 && h->img_depth != 24 && h->img_depth != 32 ) {
-    //     return STATUS_IMG_INCORRECT;
-    // }
+    if ( h->img_depth != 8 && h->img_depth != 24 && h->img_depth != 32 ) {
+        return STATUS_IMG_INCORRECT;
+    }
     return STATUS_SUCCESS;
 }
 
 int8 tga_load( FILE *f, image_t *img )
 {
+    uint32 xsize, ysize, image_size;
+    uint8 *data, depth;
+    size_t i, j;
     tga_fmt_t h;
-    uint32 xsize, ysize, image_size, i, j;
-    uint8 header[sizeof( tga_fmt_t )], depth;
-    uint8 *data;
 
     memset( &h, 0, sizeof( tga_fmt_t ) );
     fread( &h, sizeof( tga_fmt_t ), 1, f );
@@ -47,12 +46,7 @@ int8 tga_load( FILE *f, image_t *img )
     }
     xsize = h.img_width;
     ysize = h.img_height;
-    depth = h.img_depth;
-    // if ( depth != 8 && depth != 24 && depth != 32 ) {
-    //     img_module_error( "image depth is not multiple 8, 16 or 24 bits!" );
-    //     return EXIT_FAILURE;
-    // }
-    depth /= 8;
+    depth = h.img_depth / 8;
     image_size = xsize * ysize * depth;
     switch ( h.img_type ) {
         case 0: // none
@@ -112,5 +106,6 @@ int8 tga_load( FILE *f, image_t *img )
 
 int8 tga_save( FILE *f, image_t *img )
 {
+    // input code here
     return STATUS_SUCCESS;
 }

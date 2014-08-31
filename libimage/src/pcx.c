@@ -22,14 +22,13 @@ void pcx_info( pcx_fmt_t *h )
 {
     uint8 i;
 
-    printf( pcx_info_01, h->manufacturer, h->version, h->encoding, h->bpp, 
-        h->xmin, h->ymin, h->xmax, h->ymax, h->hdpi, h->vdpi );
+    printf( pcx_info_01, h->manufacturer, h->version, h->encoding, h->bpp, h->xmin, h->ymin, h->xmax, h->ymax, 
+            h->hdpi, h->vdpi );
     for ( i = 0; i < 48; i++ ) {
         printf( "%x", h->colormap[i] );
     }
     putchar( '\n' );
-    printf( pcx_info_02, h->reserved, h->nplanes, h->bpl, h->pallete_info,
-        h->hscreen_size, h->vscreen_size );
+    printf( pcx_info_02, h->reserved, h->nplanes, h->bpl, h->pallete_info, h->hscreen_size, h->vscreen_size );
     for ( i = 0; i < 54; i++ ) {
         printf( "%x", h->filler[i] );
     }
@@ -46,12 +45,11 @@ int8 pcx_is_correct( pcx_fmt_t *h )
 
 int8 pcx_load( FILE *f, image_t *img )
 {
-    pcx_fmt_t h;
     uint32 xsize, ysize, total_bytes;
     uint8 *buffer, *data, count;
+    size_t file_size, i, n = 0;
     uint8 plane;
-    uint32 i, n = 0;
-    size_t file_size;
+    pcx_fmt_t h;
 
     memset( &h, 0, sizeof( pcx_fmt_t ) );
     fread( &h, sizeof( pcx_fmt_t ), 1, f );
@@ -120,6 +118,8 @@ int8 pcx_load( FILE *f, image_t *img )
             img->c_format = IMG_RGBA;
             img->data = buffer;
             break;
+        default:
+            break;
     }
     return STATUS_SUCCESS;
 }
@@ -128,8 +128,8 @@ int8 pcx_save( FILE *f, image_t *img )
 {
     pcx_fmt_t h;
 
-    memset( &h, 0, sizeof(pcx_fmt_t) );
-    h.manufacturer = 10;
+    memset( &h, 0, sizeof( pcx_fmt_t ) );
+    h.manufacturer = 0x0A;
     h.version = 5;
     h.encoding = 1;
     h.bpp = img->bpp;

@@ -2,6 +2,7 @@
 #define __TGA_H__
 
 #include "data.h"
+#include "error.h"
 
 #pragma pack( push, 1 )
 struct tga_fmt {

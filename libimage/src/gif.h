@@ -2,6 +2,7 @@
 #define __GIF_H__
 
 #include "data.h"
+#include "error.h"
 
 struct gif_block {
     // Image Descriptor
