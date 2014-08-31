@@ -22,6 +22,7 @@ void system_init( int *argc, char *argv[] )
     GLint sw, sh;
     size_t len;
 
+    img_info();
     if ( *argc == 2 && ( len = strlen( argv[1] ) ) > 0 ) {
         img_file = (char *) malloc( len*sizeof(char) );
         strcpy( img_file, argv[1] );
