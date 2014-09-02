@@ -13,7 +13,7 @@ const char gif_info_01[] =
 
 void gif_info( gif_fmt_t *h )
 {
-    int16 color_type, color, sort_flag, size;
+    uint16 color_type, color, sort_flag, size;
     uint8 i;
 
     printf( "gif.signature  = " );

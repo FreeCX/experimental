@@ -45,11 +45,7 @@ int8 img_null( FILE *f, image_t *h )
 
 uint8 img_load( char *filename, image_t *img )
 {
-#ifdef __WIN32__
-    static const char format_string[] = "> run %s function @ 0x%p: %s\n";
-#elif __linux__
     static const char format_string[] = "> run %s function @ %p : %s\n";
-#endif
     uint8 status;
     size_t i;
     FILE *f;
