@@ -16,6 +16,7 @@ fn tokenize( data: & str, delimeters: & str ) -> Vec< String >  {
         }
         next += 1u;
     }
+    // add last token
     if next - prev >= 1u {
         token.push( data.slice_chars( prev, next ).to_string() );
     }
@@ -28,6 +29,6 @@ fn main() {
     let token = tokenize( data, del );
 
     for i in token.iter() {
-        println!( "token = {}", i );
+        println!( "token: {}", i );
     }
 }
