@@ -10,14 +10,6 @@ struct token {
 };
 typedef struct token token_t;
 
-void string_copy_n( const char *src, char *dst, size_t start, size_t length )
-{
-    size_t i = 0;
-
-    while ( ( dst[i] = src[i+start] ) != NULL_STR && i <= length ) { i++; }
-    dst[i] = NULL_STR;
-}
-
 void tokenize( token_t **a, const char *data, const char *delimeters )
 {
     size_t del_length = strlen( delimeters ) + 1;
@@ -46,7 +38,8 @@ void tokenize( token_t **a, const char *data, const char *delimeters )
             if ( data[i] == delimeters[j] ) {
                 if ( next - prev >= 1 ) {
                     obj->name[n] = (char *) malloc( ( next - prev + 1 ) * sizeof( char ) );
-                    string_copy_n( data, obj->name[n], prev, next - prev - 1 );
+                    strncpy( obj->name[n], data + prev, next - prev );
+                    obj->name[n][next-prev] = '\0';
                     prev = next + 1;
                     n++;
                     break;
