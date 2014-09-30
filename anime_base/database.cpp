@@ -92,7 +92,7 @@ void anibase::run_regexp( std::string regexp )
             case 'd':
                 std::cout << "\e[0;31m>> deleted elements:\e[0m" << std::endl;
                 for ( auto & a : id ) {
-                    print_one( format, a );
+                    print_element( a );
                     database.erase( database.begin() + a );
                 }
                 update++;
@@ -103,7 +103,7 @@ void anibase::run_regexp( std::string regexp )
                 id = get_id_by_name( regexp_token[i] );
                 std::cout << "\e[0;37m>> found elements:\e[0m" << std::endl;
                 for ( auto & a : id ) {
-                    print_one( format, a );
+                    print_element( a );
                 }
                 break;
             case 'i':
@@ -162,7 +162,7 @@ void anibase::run_regexp( std::string regexp )
     if ( id.size() > 0 && update > 0 ) {
         std::cout << "\e[0;32m>> changed to:\e[0m" << std::endl;
         for ( auto & a : id ) {
-            print_one( format, a );
+            print_element( a );
         }
     }
 }
