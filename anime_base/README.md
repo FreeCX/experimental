@@ -28,6 +28,7 @@ Anime Base
 Главное текстовое меню в разработке. Поэтому используйте regexp.
 
 `$ ./list`
+
     > menu:
      1 -- input regexp
      2 -- print database
