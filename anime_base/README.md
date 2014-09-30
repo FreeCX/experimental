@@ -23,3 +23,16 @@ Anime Base
 
 \>> changed to:
  [id: 0] title: '             d.gray-man', status: complete, progress: 103 / 103, score: 7 / 10
+
+##### Text menu:
+Главное текстовое меню в разработке. Поэтому используйте regexp.
+
+`$ ./list`
+    > menu:
+     1 -- input regexp
+     2 -- print database
+     3 -- print by id
+     4 -- find by name
+     5 -- write database
+     0 -- exit
+    > select:
