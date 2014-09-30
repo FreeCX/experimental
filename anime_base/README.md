@@ -18,11 +18,10 @@ Anime Base
 ##### HOW-TO use program:
 `$ ./list "f/D.Gray-man/+/-/s7/p23/sc/n/d.gray-man/w"`
 
-\>> found elements:
- [id: 0] title: '             D.Gray-man', status:    watch, progress:  77 / 103, score: 8 / 10
-
-\>> changed to:
- [id: 0] title: '             d.gray-man', status: complete, progress: 103 / 103, score: 7 / 10
+    >> found elements:
+     [id: 0] title: '             D.Gray-man', status:    watch, progress:  77 / 103, score: 8 / 10
+    >> changed to:
+     [id: 0] title: '             d.gray-man', status: complete, progress: 103 / 103, score: 7 / 10
 
 ##### Text menu:
 Главное текстовое меню в разработке. Поэтому используйте regexp.
