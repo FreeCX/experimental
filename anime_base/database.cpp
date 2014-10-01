@@ -10,14 +10,15 @@ const char * status_list[] = {
 };
 const char regexp_info[] =
     ">> regexp info:\n"
-    " f         -- find by title\n"
-    " d         -- delete elements {found by title}\n"
     " +         -- progress +1\n"
     " -         -- progress -1\n"
-    " s{number} -- set score to {number}\n"
-    " p{number} -- set progress to {number}\n"
-    " s{letter} -- set status { c -- complete, d -- drop, p -- plan, w -- watch }\n"
+    " d         -- delete elements {found by title}\n"
+    " f         -- find by title\n"
+    " i         -- print this info\n"
     " n{new}    -- set name to {new}\n"
+    " p{number} -- set progress to {number}\n"
+    " s{number} -- set score to {number}\n"
+    " s{letter} -- set status { c -- complete, d -- drop, p -- plan, w -- watch }\n"
     " w         -- write to database\n"
     ">> example: f/D.Gray-man/+/-/s7/p23/sc/n/d.gray-man/w";
 
@@ -61,9 +62,10 @@ void anibase::write_database( std::string filename )
 
 void anibase::run_regexp( std::string regexp )
 {
-    std::vector< size_t > id;
+    std::vector< size_t > id, changed;
+    bool save_flag = false;
     token_t regexp_token;
-    int update = 0;
+    size_t update = 0;
 
     tokenize( regexp, "/" );
     for ( auto & t : token ) {
@@ -90,21 +92,34 @@ void anibase::run_regexp( std::string regexp )
                 update++;
                 break;
             case 'd':
-                std::cout << "\e[0;31m>> deleted elements:\e[0m" << std::endl;
                 for ( auto & a : id ) {
-                    print_element( a );
+#ifdef _WIN32
+                    std::cout << ">> delete:";
+#else
+                    std::cout << "\e[0;37m>> delete:\e[0m";
+#endif
+                    print_one( format, a );
                     database.erase( database.begin() + a );
                 }
-                update++;
                 id.clear();
                 break;
             case 'f':
                 i++;
-                id = get_id_by_name( regexp_token[i] );
-                std::cout << "\e[0;37m>> found elements:\e[0m" << std::endl;
+                get_id_by_name( regexp_token[i], id );
+                std::sort( id.begin(), id.end() );
+                id.erase( std::unique( id.begin(), id.end() ), id.end() );
                 for ( auto & a : id ) {
-                    print_element( a );
+#ifdef _WIN32
+                    std::cout << ">>  found:";
+#else
+                    std::cout << "\e[0;37m>> found:\e[0m";
+#endif
+                    print_one( format, a );
                 }
+                changed.reserve( id.size() + changed.size() );
+                changed.insert( changed.end(), id.begin(), id.end() );
+                std::sort( changed.begin(), changed.end() );
+                changed.erase( std::unique( changed.begin(), changed.end() ), changed.end() );
                 break;
             case 'i':
                 std::cout << regexp_info << std::endl;
@@ -130,7 +145,7 @@ void anibase::run_regexp( std::string regexp )
                         switch ( regexp_token[i][0] ) {
                             case 'c':
                                 database[a].status = get_status_id( "complete" );
-                                database[a].progress_cur = database[a].progress_max;
+                                database[a].progress_cur = database[id[a]].progress_max;
                                 break;
                             case 'd':
                                 database[a].status = get_status_id( "drop" );
@@ -154,16 +169,28 @@ void anibase::run_regexp( std::string regexp )
                 break;
             case 'w':
                 write_database( file_name );
+                save_flag = true;
                 break;
             default:
                 break;
         }
     }
-    if ( id.size() > 0 && update > 0 ) {
-        std::cout << "\e[0;32m>> changed to:\e[0m" << std::endl;
-        for ( auto & a : id ) {
-            print_element( a );
+    if ( changed.size() > 0 && update > 0 ) {
+        for ( auto & a : changed ) {
+#ifdef _WIN32
+            std::cout << ">> change:";
+#else
+            std::cout << "\e[0;32m>> change:\e[0m";
+#endif
+            print_one( format, a );
         }
+    }
+    if ( save_flag == true ) {
+#ifdef _WIN32
+        std::cout << ">> change saved!" << std::endl;
+#else
+        std::cout << "\e[0;37m>> change saved!\e[0m" << std::endl;
+#endif
     }
 }
 
@@ -237,12 +264,12 @@ void anibase::print_one( print_format_t & fmt, size_t id )
 {
     anime_list_t & a = database[id];
 
-    std::cout << " [id: " <<std::setw( fmt.id_size ) << id
-              << "] title: '" << std::setw( fmt.max_name ) << a.name
+    std::cout << " '" << std::setw( fmt.max_name ) << a.name
               << "', status: " << std::setw( fmt.max_status ) << get_status_str( a.status )
               << ", progress: " << std::setw( fmt.max_progress ) << a.progress_cur
               << " / " << std::setw( fmt.max_progress ) << a.progress_max
-              << ", score: " << std::setw( fmt.max_score ) << a.score << " / 10" << std::endl;
+              << ", score: " << std::setw( fmt.max_score ) << a.score << " / 10"
+              << ", id: " << std::setw( fmt.id_size ) << id << std::endl;
 }
 
 void anibase::print_element( size_t id )
@@ -271,14 +298,11 @@ void anibase::print_by_name( std::string name )
     }
 }
 
-std::vector< size_t > anibase::get_id_by_name( std::string name )
+void anibase::get_id_by_name( std::string name, std::vector< size_t > & id )
 {
-    std::vector< size_t > id;
-
     for ( size_t i = 0; i < database.size(); i++ ) {
         if ( database[i].name.find( name ) != std::string::npos ) {
             id.push_back( i );
         }
     }
-    return id;
 }

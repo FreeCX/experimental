@@ -1,5 +1,6 @@
 #ifndef __DATABASE_HPP__
 
+#include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <fstream>
@@ -17,7 +18,6 @@ struct anime_list_t {
     int progress_max;
     int score;
 };
-// format: "<title-name>" : status : series : score : "<comments>"
 struct print_format_t {
     size_t max_name = 0;
     size_t max_progress = 0;
@@ -35,7 +35,7 @@ public:
     void print_element( size_t id );
     void print_database( void );
     void print_by_name( std::string name );
-    std::vector< size_t > get_id_by_name( std::string name );
+    void get_id_by_name( std::string name, std::vector< size_t > & id );
     size_t get_size( void );
 private:
     void tokenize( const std::string & data, const std::string & delimeters );
