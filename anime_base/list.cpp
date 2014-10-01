@@ -1,14 +1,15 @@
 #include <iostream>
+#include <clocale>
 #include "database.hpp"
 
 const char menu_info[] =
     "> menu:\n"
-    " 1 -- input regexp\n"
-    " 2 -- print database\n"
-    " 3 -- print by id\n"
-    " 4 -- find by name\n"
-    " 5 -- write database\n"
-    " 0 -- exit\n"
+    " 1 -- ввести regex\n"
+    " 2 -- вывести базу\n"
+    " 3 -- найти по id\n"
+    " 4 -- найти по имени\n"
+    " 5 -- записать изменения\n"
+    " 0 -- выход\n"
     "> select: ";
 
 int main( int argc, char * argv[] )
@@ -17,7 +18,14 @@ int main( int argc, char * argv[] )
     std::string buffer;
     anibase data;
 
-    data.read_database( argv[1] );
+    setlocale( LC_ALL, "" );
+    if ( argc == 1 ) {
+        std::cout << "usage: " << argv[0] << " <database> <regex>" << std::endl;
+        exit( 0 );
+    } else if ( data.read_database( argv[1] ) == false ) {
+        std::cout << "Can't open " << argv[1] << " file!" << std::endl;
+        exit( 0 );
+    }
     if ( argc > 2 ) {
         data.run_regexp( argv[2] );
     } else {
