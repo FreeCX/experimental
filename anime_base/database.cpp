@@ -63,9 +63,9 @@ void anibase::write_database( std::string filename )
 void anibase::run_regexp( std::string regexp )
 {
     std::vector< size_t > id, changed;
+    size_t update = 0, id_curr = 0;
     bool save_flag = false;
     token_t regexp_token;
-    size_t update = 0;
 
     tokenize( regexp, "/" );
     for ( auto & t : token ) {
@@ -96,7 +96,7 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
                     std::cout << ">> delete:";
 #else
-                    std::cout << "\e[0;37m>> delete:\e[0m";
+                    std::cout << "\e[0;31m>> delete:\e[0m";
 #endif
                     print_one( format, a );
                     database.erase( database.begin() + a );
@@ -106,20 +106,19 @@ void anibase::run_regexp( std::string regexp )
             case 'f':
                 i++;
                 get_id_by_name( regexp_token[i], id );
-                std::sort( id.begin(), id.end() );
-                id.erase( std::unique( id.begin(), id.end() ), id.end() );
-                for ( auto & a : id ) {
+                for ( size_t a = id_curr; a < id.size(); a++ ) {
 #ifdef _WIN32
                     std::cout << ">>  found:";
 #else
-                    std::cout << "\e[0;37m>> found:\e[0m";
+                    std::cout << "\e[0;37m>>  found:\e[0m";
 #endif
-                    print_one( format, a );
+                    print_one( format, id[a] );
                 }
                 changed.reserve( id.size() + changed.size() );
                 changed.insert( changed.end(), id.begin(), id.end() );
                 std::sort( changed.begin(), changed.end() );
                 changed.erase( std::unique( changed.begin(), changed.end() ), changed.end() );
+                id_curr = id.size();
                 break;
             case 'i':
                 std::cout << regexp_info << std::endl;
@@ -136,6 +135,7 @@ void anibase::run_regexp( std::string regexp )
                 for ( auto & a : id ) {
                     database[a].progress_cur = std::stoi( regexp_token[i] );
                 }
+                id_curr = 0;
                 update++;
                 break;
             case 's':
@@ -170,12 +170,15 @@ void anibase::run_regexp( std::string regexp )
             case 'w':
                 write_database( file_name );
                 save_flag = true;
+                id.clear();
                 break;
             default:
                 break;
         }
     }
     if ( changed.size() > 0 && update > 0 ) {
+        std::sort( changed.begin(), changed.end() );
+        changed.erase( std::unique( changed.begin(), changed.end() ), changed.end() );
         for ( auto & a : changed ) {
 #ifdef _WIN32
             std::cout << ">> change:";
@@ -189,7 +192,7 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
         std::cout << ">> change saved!" << std::endl;
 #else
-        std::cout << "\e[0;37m>> change saved!\e[0m" << std::endl;
+        std::cout << "\e[0;34m>> change saved!\e[0m" << std::endl;
 #endif
     }
 }
@@ -246,10 +249,10 @@ const char * anibase::get_status_str( size_t i )
 
 void anibase::update_print_format( print_format_t & fmt, anime_list_t & a )
 {
-    size_t progress_m = std::ceil( std::log10( a.progress_max ) );
-    size_t score = std::ceil( std::log10( a.score ) );
+    int progress_m = std::ceil( std::log10( a.progress_max ) );
+    int score = std::ceil( std::log10( a.score ) );
 
-    if ( a.name.length() > fmt.max_name ) {
+    if ( (int) a.name.length() > fmt.max_name ) {
         fmt.max_name = a.name.length();
     }
     if ( progress_m > fmt.max_progress ) {

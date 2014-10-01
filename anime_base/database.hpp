@@ -19,11 +19,11 @@ struct anime_list_t {
     int score;
 };
 struct print_format_t {
-    size_t max_name = 0;
-    size_t max_progress = 0;
-    size_t max_score = 0;
-    size_t id_size = 0;
-    size_t max_status = 0;
+    int max_name = 0;
+    int max_progress = 0;
+    int max_score = 0;
+    int id_size = 0;
+    int max_status = 0;
 };
 
 class anibase {
