@@ -39,13 +39,15 @@ bool anibase::read_database( std::string filename )
     }
     while ( std::getline( read, buffer ) ) {
         tokenize( buffer, delimeters );
-        tmp.name = token[0].substr( 1, token[0].length() - 2 );
-        tmp.status = get_status_id( token[1] );
-        tmp.progress_cur = std::stoi( token[3] );
-        tmp.progress_max = std::stoi( token[4] );
-        tmp.score = std::stoi( token[6] );
-        update_print_format( format, tmp );
-        database.push_back( tmp );
+        if ( token.size() == 7 ) {
+            tmp.name = token[0].substr( 1, token[0].length() - 2 );
+            tmp.status = get_status_id( token[1] );
+            tmp.progress_cur = std::stoi( token[3] );
+            tmp.progress_max = std::stoi( token[4] );
+            tmp.score = std::stoi( token[6] );
+            update_print_format( format, tmp );
+            database.push_back( tmp );
+        }
         token.clear();
     }
     format.max_status = 8; // by status_list
