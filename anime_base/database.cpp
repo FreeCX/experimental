@@ -250,16 +250,12 @@ const char * anibase::get_status_str( size_t i )
 void anibase::update_print_format( print_format_t & fmt, anime_list_t & a )
 {
     int progress_m = std::ceil( std::log10( a.progress_max ) );
-    int score = std::ceil( std::log10( a.score ) );
 
     if ( (int) a.name.length() > fmt.max_name ) {
         fmt.max_name = a.name.length();
     }
     if ( progress_m > fmt.max_progress ) {
         fmt.max_progress = progress_m;
-    }
-    if ( score > fmt.max_score ) {
-        fmt.max_score = score;
     }
 }
 

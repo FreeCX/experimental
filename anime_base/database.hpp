@@ -21,7 +21,7 @@ struct anime_list_t {
 struct print_format_t {
     int max_name = 0;
     int max_progress = 0;
-    int max_score = 0;
+    int max_score = 2;
     int id_size = 0;
     int max_status = 0;
 };
