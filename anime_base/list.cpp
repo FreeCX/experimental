@@ -1,7 +1,6 @@
 #include <iostream>
 #include "database.hpp"
 
-const char filename[] = "anime-list";
 const char menu_info[] =
     "> menu:\n"
     " 1 -- input regexp\n"
@@ -18,9 +17,9 @@ int main( int argc, char * argv[] )
     std::string buffer;
     anibase data;
 
-    data.read_database( filename );
-    if ( argc > 1 ) {
-        data.run_regexp( argv[1] );
+    data.read_database( argv[1] );
+    if ( argc > 2 ) {
+        data.run_regexp( argv[2] );
     } else {
         do {
             std::cout << menu_info;
@@ -49,7 +48,7 @@ int main( int argc, char * argv[] )
                     std::cout << std::endl;
                     break;
                 case 5:
-                    data.write_database( filename );
+                    data.write_database( argv[1] );
                     std::cout << "> changes saved!" << std::endl;
                     break;
                 default:
