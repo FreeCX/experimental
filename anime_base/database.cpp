@@ -9,20 +9,22 @@ const char * status_list[] = {
     nullptr
 };
 const char regexp_info[] =
-    ">> regexp info:\n"
-    " +         -- progress +1\n"
-    " -         -- progress -1\n"
-    " d         -- delete elements {found by title}\n"
-    " f         -- find by title\n"
-    " i         -- print this info\n"
-    " n{new}    -- set name to {new}\n"
-    " p{number} -- set progress to {number}\n"
-    " s{number} -- set score to {number}\n"
-    " s{letter} -- set status { c -- complete, d -- drop, p -- plan, w -- watch }\n"
-    " w         -- write to database\n"
+    ">> regex info:\n"
+    " +        -- номер серии +1\n"
+    " -        -- номер серии -1\n"
+    " a        -- добавить элемент\n"
+    " d        -- удалить элементы {найденые элементы параметром f}\n"
+    " f        -- поиск по названию\n"
+    " i        -- распечатать эту информацию\n"
+    " n        -- изменить имя на новое\n"
+    " p{число} -- установить номер серии на {число}\n"
+    " m{число} -- установить максимальный номер серии {0 в случае онгоинга}\n"
+    " s{число} -- установить рейтинг {число}\n"
+    " s{буква} -- установить статут { c -- complete, d -- drop, p -- plan, w -- watch }\n"
+    " w        -- записать изменения в базу\n"
     ">> example: f/D.Gray-man/+/-/s7/p23/sc/n/d.gray-man/w";
 
-void anibase::read_database( std::string filename )
+bool anibase::read_database( std::string filename )
 {
     std::string delimeters = " /";
     std::string buffer;
@@ -31,6 +33,9 @@ void anibase::read_database( std::string filename )
 
     file_name = filename;
     read.open( filename );
+    if ( read.is_open() == false ) {
+        return false;
+    }
     while ( std::getline( read, buffer ) ) {
         tokenize( buffer, delimeters );
         tmp.name = token[0].substr( 1, token[0].length() - 2 );
@@ -45,6 +50,7 @@ void anibase::read_database( std::string filename )
     format.max_status = 8; // by status_list
     format.id_size = std::ceil( std::log10( database.size() ) );
     read.close();
+    return true;
 }
 
 void anibase::write_database( std::string filename )
@@ -62,14 +68,14 @@ void anibase::write_database( std::string filename )
 
 void anibase::run_regexp( std::string regexp )
 {
+    size_t update = 0, id_curr = 0, eid = 0;
     std::vector< size_t > id, changed;
-    size_t update = 0, id_curr = 0;
     bool save_flag = false;
     token_t regexp_token;
 
     tokenize( regexp, "/" );
     for ( auto & t : token ) {
-        if ( t[0] == 's' || t[0] == 'p' ) {
+        if ( t[0] == 's' || t[0] == 'p' || t[0] == 'm' ) {
             regexp_token.push_back( t.substr( 0, 1 ) );
             regexp_token.push_back( t.substr( 1 ) );
         } else {
@@ -91,6 +97,19 @@ void anibase::run_regexp( std::string regexp )
                 }
                 update++;
                 break;
+            case 'a':
+                i++;
+                eid = add_element( regexp_token[i] );
+                id.push_back( eid );
+                changed.push_back( eid );
+#ifdef _WIN32
+                std::cout << ">> append:";
+#else
+                std::cout << "\e[0;34m>> append:\e[0m";
+#endif
+                print_one( format, get_size() );
+                update++;
+                break;
             case 'd':
                 for ( auto & a : id ) {
 #ifdef _WIN32
@@ -99,6 +118,8 @@ void anibase::run_regexp( std::string regexp )
                     std::cout << "\e[0;31m>> delete:\e[0m";
 #endif
                     print_one( format, a );
+                }
+                for ( auto & a : id ) {
                     database.erase( database.begin() + a );
                 }
                 id.clear();
@@ -134,6 +155,14 @@ void anibase::run_regexp( std::string regexp )
                 i++;
                 for ( auto & a : id ) {
                     database[a].progress_cur = std::stoi( regexp_token[i] );
+                }
+                id_curr = 0;
+                update++;
+                break;
+            case 'm':
+                i++;
+                for ( auto & a : id ) {
+                    database[a].progress_max = std::stoi( regexp_token[i] );
                 }
                 id_curr = 0;
                 update++;
@@ -266,8 +295,13 @@ void anibase::print_one( print_format_t & fmt, size_t id )
     std::cout << " '" << std::setw( fmt.max_name ) << a.name
               << "', status: " << std::setw( fmt.max_status ) << get_status_str( a.status )
               << ", progress: " << std::setw( fmt.max_progress ) << a.progress_cur
-              << " / " << std::setw( fmt.max_progress ) << a.progress_max
-              << ", score: " << std::setw( fmt.max_score ) << a.score << " / 10"
+              << " / " << std::setw( fmt.max_progress );
+    if ( a.progress_max == 0 ) {
+        std::cout << "?";
+    } else {
+        std::cout << a.progress_max;
+    }
+    std::cout << ", score: " << std::setw( fmt.max_score ) << a.score << " / 10"
               << ", id: " << std::setw( fmt.id_size ) << id << std::endl;
 }
 
@@ -304,4 +338,13 @@ void anibase::get_id_by_name( std::string name, std::vector< size_t > & id )
             id.push_back( i );
         }
     }
+}
+
+size_t anibase::add_element( std::string name )
+{
+    anime_list_t tmp;
+
+    tmp.name = name;
+    database.push_back( tmp );
+    return get_size();
 }
