@@ -207,7 +207,6 @@ void anibase::run_regexp( std::string regexp )
             case 'w':
                 write_database( file_name );
                 save_flag = true;
-                id.clear();
                 break;
             default:
                 break;
@@ -237,6 +236,7 @@ void anibase::run_regexp( std::string regexp )
 #else
         std::cout << "\e[0;34m>> change saved!\e[0m" << std::endl;
 #endif
+        id.clear();
     }
 }
 
