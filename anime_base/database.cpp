@@ -14,7 +14,7 @@ const char regexp_info[] =
     " +        -- номер серии +1\n"
     " a        -- добавить элемент [ a/имя ]\n"
     " d        -- удалить элементы { найденые элементы параметром f }\n"
-    " f        -- поиск по названию [ f/имя ]\n"
+    " f        -- поиск по названию [ f/\"имя или regex\" ]\n"
     " i        -- распечатать эту информацию\n"
     " l        -- вывести весь список\n"
     " m{число} -- установить максимальный номер серии { 0 в случае онгоинга }\n"
@@ -23,7 +23,7 @@ const char regexp_info[] =
     " s{буква} -- установить статуc { c -- complete, d -- drop, p -- plan, w -- watch }\n"
     " s{число} -- установить рейтинг { число }\n"
     " w        -- записать изменения в базу\n"
-    ">> example: f/D.Gray-man/+/-/s7/p23/sc/n/d.gray-man/w";
+    ">> example: f/\"D.Gray-man\"/+/-/s7/p23/sc/n/d.gray-man/w";
 
 bool anibase::read_database( std::string filename )
 {
@@ -175,29 +175,26 @@ void anibase::run_regexp( std::string regexp )
                 break;
             case 's':
                 i++;
-                if ( isalpha( regexp_token[i][0] ) ) {
-                    for ( auto & a : id ) {
-                        switch ( regexp_token[i][0] ) {
-                            case 'c':
-                                database[a].status = get_status_id( "complete" );
-                                database[a].progress_cur = database[id[a]].progress_max;
-                                break;
-                            case 'd':
-                                database[a].status = get_status_id( "drop" );
-                                break;
-                            case 'p':
-                                database[a].status = get_status_id( "plan" );
-                                break;
-                            case 'w':
-                                database[a].status = get_status_id( "watch" );
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                } else {
-                    for ( auto & a : id ) {
-                        database[a].score = std::stoi( regexp_token[i] );
+                for ( auto & a : id ) {
+                    switch ( regexp_token[i][0] ) {
+                        case 'c':
+                            database[a].status = get_status_id( "complete" );
+                            database[a].progress_cur = database[a].progress_max;
+                            break;
+                        case 'd':
+                            database[a].status = get_status_id( "drop" );
+                            break;
+                        case 'p':
+                            database[a].status = get_status_id( "plan" );
+                            break;
+                        case 'w':
+                            database[a].status = get_status_id( "watch" );
+                            break;
+                        case '0'...'9':
+                            database[a].score = std::stoi( regexp_token[i] );
+                            break;
+                        default:
+                            break;
                     }
                 }
                 update++;
@@ -340,7 +337,7 @@ void anibase::print_by_name( std::string name )
 void anibase::get_id_by_name( std::string name, std::vector< size_t > & id )
 {
     std::regex regex_str;
-    
+
     try {
         regex_str = name.substr( 1, name.size() - 2 );
     } catch ( std::regex_error& e ){
