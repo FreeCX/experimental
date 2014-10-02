@@ -21,25 +21,28 @@ Anime Base (alpha version)
 ##### Использование программы:
 Редактирование существующей записи:
 `$ ./list <database> 'f/"D.Gray-man"/+/-/s7/p23/m500/sc/n/d.gray-man/w'`
+
     >>  found: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
     >> change: '             d.gray-man', status: complete, progress: 500 / 500, score:  7 / 10, id: 0
     >> change saved!
 
 Добавление новой записи:
 `$ ./list <database> 'a/Super Movie 4/p1/m100/s7/sp/w'`
+
     >> append: '          Super Movie 4', status:     plan, progress:   0 /   0, score:  0 / 10, id: 3
     >> change: '          Super Movie 4', status:     plan, progress:   1 / 100, score:  7 / 10, id: 3
     >> change saved!
 
 или с экранированием названия
 `$ ./list <database> 'a/"Super\ Movie\ 4"/p1/m?/s7/sp/w'`
+
     >> append: '        Super\ Movie\ 4', status:     plan, progress:   0 /   ?, score:  0 / 10, id: 3
     >> change: '        Super\ Movie\ 4', status:     plan, progress:   1 /   ?, score:  7 / 10, id: 3
     >> change saved!
 
-
 Удаление нескольких записей:
 `$ ./list <database> 'f/"D.*"/f/"Code:.*"/d/w'` или `$ ./list <database> 'f/"D.*|Code:.*"/d/w'`
+
     >>  found: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
     >>  found: '          Code: Breaker', status: complete, progress:  13 /  13, score:  7 / 10, id: 1
     >> delete: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
@@ -50,6 +53,7 @@ Anime Base (alpha version)
 Главное текстовое меню в разработке. Поэтому используйте регулярные выражения для редактирования.
 
 `$ ./list <database>`
+
     > menu:
      1 -- ввести regex
      2 -- вывести базу
