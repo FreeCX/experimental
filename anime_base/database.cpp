@@ -42,9 +42,9 @@ bool anibase::read_database( std::string filename )
         if ( token.size() == 7 ) {
             tmp.name = token[0].substr( 1, token[0].length() - 2 );
             tmp.status = get_status_id( token[1] );
-            tmp.progress_cur = std::stoi( token[3] );
+            tmp.progress_cur = isdigit( token[3][0] ) ? std::stoi( token[3] ) : 0;
             tmp.progress_max = ( token[4][0] == '?' ) ? 0 : std::stoi( token[4] );
-            tmp.score = std::stoi( token[6] );
+            tmp.score = isdigit( token[6][0] ) ? std::stoi( token[6] ) : 0;
             update_print_format( format, tmp );
             database.push_back( tmp );
         }
@@ -341,7 +341,7 @@ void anibase::get_id_by_name( std::string name, std::vector< size_t > & id )
     std::regex regex_str;
 
     try {
-        regex_str = name.substr( 1, name.size() - 2 );
+        regex_str = name.substr( 1, name.length() - 2 );
     } catch ( std::regex_error& e ){
         if ( e.code() == std::regex_constants::error_badrepeat ) {
             std::cerr << "[error]: Repeat was not preceded by a valid regular expression." << std::endl;
