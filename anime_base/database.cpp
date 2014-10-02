@@ -12,13 +12,13 @@ const char regexp_info[] =
     ">> regex info:\n"
     " -        -- номер серии -1\n"
     " +        -- номер серии +1\n"
-    " a        -- добавить элемент [ a/имя ]\n"
+    " a        -- добавить элемент [ a/имя | a/\"имя\" ]\n"
     " d        -- удалить элементы { найденые элементы параметром f }\n"
     " f        -- поиск по названию [ f/\"имя или regex\" ]\n"
     " i        -- распечатать эту информацию\n"
     " l        -- вывести весь список\n"
-    " m{число} -- установить максимальный номер серии { 0 в случае онгоинга }\n"
-    " n        -- изменить имя на новое [ n/имя ]\n"
+    " m{число} -- установить максимальный номер серии { ? в случае онгоинга }\n"
+    " n        -- изменить имя на новое [ n/имя | n/\"имя\" ]\n"
     " p{число} -- установить номер серии на { число }\n"
     " s{буква} -- установить статуc { c -- complete, d -- drop, p -- plan, w -- watch }\n"
     " s{число} -- установить рейтинг { число }\n"
@@ -63,8 +63,13 @@ void anibase::write_database( std::string filename )
     write.open( filename );
     for ( auto & a : database ) {
         write << "\"" << a.name << "\" " << status_list[ a.status ]
-              << " progress " << a.progress_cur << "/" << a.progress_max
-              << " score " << a.score << std::endl;
+              << " progress " << a.progress_cur << "/";
+        if ( a.progress_max == 0 ) {
+            write << "?";
+        } else {
+            write << a.progress_max;
+        }
+        write << " score " << a.score << std::endl;
     }
     write.close();
 }
@@ -146,7 +151,11 @@ void anibase::run_regexp( std::string regexp )
             case 'n':
                 i++;
                 for ( auto & a : id ) {
-                    database[a].name = regexp_token[i];
+                    if ( regexp_token[i][0] == '\"' ) {
+                        database[a].name = regexp_token[i].substr( 1, regexp_token[i].length() - 2 );
+                    } else {
+                        database[a].name = regexp_token[i][0];
+                    }
                 }
                 update++;
                 break;
@@ -164,7 +173,7 @@ void anibase::run_regexp( std::string regexp )
             case 'm':
                 i++;
                 for ( auto & a : id ) {
-                    database[a].progress_max = std::stoi( regexp_token[i] );
+                    database[a].progress_max = regexp_token[i][0] == '?' ? 0 : std::stoi( regexp_token[i] );
                 }
                 id_curr = 0;
                 update++;
@@ -361,7 +370,7 @@ size_t anibase::add_element( std::string name )
 {
     anime_list_t tmp;
 
-    tmp.name = name;
+    tmp.name = ( name[0] == '\"' ) ? name.substr( 1, name.length() - 2 ) : name;
     database.push_back( tmp );
     return get_size();
 }
