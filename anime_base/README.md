@@ -41,7 +41,9 @@ Anime Base (alpha version)
     >> change saved!
 
 Удаление нескольких записей:
-`$ ./list <database> 'f/"D.*"/f/"Code:.*"/d/w'` или `$ ./list <database> 'f/"D.*|Code:.*"/d/w'`
+`$ ./list <database> 'f/"D.*"/f/"Code:.*"/d/w'` или через regex
+
+`$ ./list <database> 'f/"D.*|Code:.*"/d/w'`
 
     >>  found: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
     >>  found: '          Code: Breaker', status: complete, progress:  13 /  13, score:  7 / 10, id: 1
