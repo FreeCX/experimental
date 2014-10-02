@@ -8,7 +8,7 @@ Anime Base (alpha version)
     +        -- номер серии +1
     a        -- добавить элемент [ a/имя ]
     d        -- удалить элементы { найденые элементы параметром f }
-    f        -- поиск по названию [ f/имя ]
+    f        -- поиск по названию [ f/"имя или regex" ]
     i        -- распечатать эту информацию
     l        -- вывести весь список
     m{число} -- установить максимальный номер серии { 0 в случае онгоинга }
@@ -20,21 +20,21 @@ Anime Base (alpha version)
 
 ##### Использование программы:
 Редактирование существующей записи:
-`$ ./list <database> "f/D.Gray-man/+/-/s7/p23/m500/sc/n/d.gray-man/w"`
+`$ ./list <database> 'f/"D.Gray-man"/+/-/s7/p23/m500/sc/n/d.gray-man/w'`
 
     >>  found: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
     >> change: '             d.gray-man', status: complete, progress: 500 / 500, score:  7 / 10, id: 0
     >> change saved!
 
 Добавление новой записи:
-`$ ./list <database> "a/Super Movie 4/p1/m100/s7/sp/w"`
+`$ ./list <database> 'a/Super Movie 4/p1/m100/s7/sp/w'`
 
     >> append: '          Super Movie 4', status:     plan, progress:   0 /   0, score:  0 / 10, id: 3
     >> change: '          Super Movie 4', status:     plan, progress:   1 / 100, score:  7 / 10, id: 3
     >> change saved!
 
 Удаление нескольких записей:
-`$ ./list <database> "f/D.Gr/f/Code:/d/w"`
+`$ ./list <database> 'f/"D.*"/f/"Code:.*"/d/w'`
 
     >>  found: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
     >>  found: '          Code: Breaker', status: complete, progress:  13 /  13, score:  7 / 10, id: 1

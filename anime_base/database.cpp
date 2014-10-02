@@ -339,8 +339,20 @@ void anibase::print_by_name( std::string name )
 
 void anibase::get_id_by_name( std::string name, std::vector< size_t > & id )
 {
+    std::regex regex_str;
+    
+    try {
+        regex_str = name.substr( 1, name.size() - 2 );
+    } catch ( std::regex_error& e ){
+        if ( e.code() == std::regex_constants::error_badrepeat ) {
+            std::cerr << "[error]: Repeat was not preceded by a valid regular expression." << std::endl;
+        } else {
+            std::cerr << "[error]: Some other regex exception happened." << std::endl;
+        }
+        return;
+    }
     for ( size_t i = 0; i < database.size(); i++ ) {
-        if ( database[i].name.find( name ) != std::string::npos ) {
+        if ( std::regex_match( database[i].name, regex_str ) ) {
             id.push_back( i );
         }
     }
