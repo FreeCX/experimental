@@ -74,6 +74,14 @@ void anibase::write_database( std::string filename )
     write.close();
 }
 
+void insert_with_update( std::vector< size_t > & id, std::vector< size_t > & changed )
+{
+    changed.reserve( id.size() + changed.size() );
+    changed.insert( changed.end(), id.begin(), id.end() );
+    std::sort( changed.begin(), changed.end() );
+    changed.erase( std::unique( changed.begin(), changed.end() ), changed.end() );
+}
+
 void anibase::run_regexp( std::string regexp )
 {
     size_t update = 0, id_curr = 0, eid = 0;
@@ -207,16 +215,16 @@ void anibase::run_regexp( std::string regexp )
             case 'w':
                 write_database( file_name );
                 save_flag = true;
+                insert_with_update( id, changed );
+                id.clear();
+                id_curr = 0;
                 break;
             default:
                 break;
         }
     }
     if ( update > 0 ) {
-        changed.reserve( id.size() + changed.size() );
-        changed.insert( changed.end(), id.begin(), id.end() );
-        std::sort( changed.begin(), changed.end() );
-        changed.erase( std::unique( changed.begin(), changed.end() ), changed.end() );
+        insert_with_update( id, changed );
     }
     if ( changed.size() > 0 ) {
         std::sort( changed.begin(), changed.end() );
