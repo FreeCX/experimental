@@ -104,12 +104,18 @@ void anibase::run_regexp( std::string regexp )
             case '+':
                 for ( auto & a : id ) {
                     database[a].progress_cur++;
+                    if ( database[a].progress_cur >= database[a].progress_max ) {
+                        database[a].progress_cur = database[a].progress_max;
+                    }
                 }
                 update++;
                 break;
             case '-':
                 for ( auto & a : id ) {
                     database[a].progress_cur--;
+                    if ( database[a].progress_cur <= 0 ) {
+                        database[a].progress_cur = 0;
+                    }
                 }
                 update++;
                 break;
@@ -174,6 +180,10 @@ void anibase::run_regexp( std::string regexp )
                 i++;
                 for ( auto & a : id ) {
                     database[a].progress_cur = std::stoi( regexp_token[i] );
+                    if ( database[a].progress_cur >= database[a].progress_max ) {
+                        database[a].progress_cur = database[a].progress_max;
+                        database[a].status = get_status_id( "complete" );
+                    }
                 }
                 id_curr = 0;
                 update++;
