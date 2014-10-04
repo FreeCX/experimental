@@ -103,18 +103,20 @@ void anibase::run_regexp( std::string regexp )
         switch ( regexp_token[i][0] ) {
             case '+':
                 for ( auto & a : id ) {
-                    database[a].progress_cur++;
-                    if ( database[a].progress_cur >= database[a].progress_max ) {
-                        database[a].progress_cur = database[a].progress_max;
+                    auto & p = database[a];
+                    p.progress_cur++;
+                    if ( p.progress_cur >= p.progress_max || p.status == get_status_id( "complete" ) ) {
+                        p.progress_cur = p.progress_max;
                     }
                 }
                 update++;
                 break;
             case '-':
                 for ( auto & a : id ) {
-                    database[a].progress_cur--;
-                    if ( database[a].progress_cur <= 0 ) {
-                        database[a].progress_cur = 0;
+                    auto & p = database[a];
+                    p.progress_cur--;
+                    if ( p.progress_cur <= 0 ) {
+                        p.progress_cur = 0;
                     }
                 }
                 update++;
@@ -165,10 +167,11 @@ void anibase::run_regexp( std::string regexp )
             case 'n':
                 i++;
                 for ( auto & a : id ) {
+                    auto & p = database[a];
                     if ( regexp_token[i][0] == '\"' ) {
-                        database[a].name = regexp_token[i].substr( 1, regexp_token[i].length() - 2 );
+                        p.name = regexp_token[i].substr( 1, regexp_token[i].length() - 2 );
                     } else {
-                        database[a].name = regexp_token[i][0];
+                        p.name = regexp_token[i][0];
                     }
                 }
                 update++;
@@ -179,10 +182,11 @@ void anibase::run_regexp( std::string regexp )
             case 'p':
                 i++;
                 for ( auto & a : id ) {
-                    database[a].progress_cur = std::stoi( regexp_token[i] );
-                    if ( database[a].progress_cur >= database[a].progress_max && database[a].progress_max != 0 ) {
-                        database[a].progress_cur = database[a].progress_max;
-                        database[a].status = get_status_id( "complete" );
+                    auto & p = database[a];
+                    p.progress_cur = std::stoi( regexp_token[i] );
+                    if ( p.progress_cur >= p.progress_max && p.progress_max != 0 ) {
+                        p.progress_cur = p.progress_max;
+                        p.status = get_status_id( "complete" );
                     }
                 }
                 id_curr = 0;
@@ -191,7 +195,11 @@ void anibase::run_regexp( std::string regexp )
             case 'm':
                 i++;
                 for ( auto & a : id ) {
-                    database[a].progress_max = regexp_token[i][0] == '?' ? 0 : std::stoi( regexp_token[i] );
+                    auto & p = database[a];
+                    p.progress_max = regexp_token[i][0] == '?' ? 0 : std::stoi( regexp_token[i] );
+                    if ( p.status == get_status_id( "complete" ) ) {
+                        p.progress_cur = p.progress_max;
+                    }
                 }
                 id_curr = 0;
                 update++;
@@ -199,22 +207,23 @@ void anibase::run_regexp( std::string regexp )
             case 's':
                 i++;
                 for ( auto & a : id ) {
+                    auto & p = database[a];
                     switch ( regexp_token[i][0] ) {
                         case 'c':
-                            database[a].status = get_status_id( "complete" );
-                            database[a].progress_cur = database[a].progress_max;
+                            p.status = get_status_id( "complete" );
+                            p.progress_cur = p.progress_max;
                             break;
                         case 'd':
-                            database[a].status = get_status_id( "drop" );
+                            p.status = get_status_id( "drop" );
                             break;
                         case 'p':
-                            database[a].status = get_status_id( "plan" );
+                            p.status = get_status_id( "plan" );
                             break;
                         case 'w':
-                            database[a].status = get_status_id( "watch" );
+                            p.status = get_status_id( "watch" );
                             break;
                         case '0'...'9':
-                            database[a].score = std::stoi( regexp_token[i] );
+                            p.score = std::stoi( regexp_token[i] );
                             break;
                         default:
                             break;
