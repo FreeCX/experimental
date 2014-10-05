@@ -8,7 +8,7 @@ Anime Base (alpha version)
     +        -- номер серии +1
     a        -- добавить элемент [ a/имя | a/"имя" ]
     d        -- удалить элементы { найденые элементы параметром f }
-    f        -- поиск по названию [ f/"имя или regex" ] [1]
+    f        -- поиск по названию [ f/имя, regex | f/"имя", "regex" ] [1]
     i        -- распечатать эту информацию
     l        -- вывести весь список
     m{число} -- установить максимальный номер серии { ? в случае онгоинга }
@@ -20,11 +20,16 @@ Anime Base (alpha version)
 
 ##### Использование программы:
 Редактирование существующей записи:
-`$ ./list <database> 'f/"D.Gray-man"/+/-/s7/p23/m500/sc/n/d.gray-man/w'`
+`$ ./list <database> 'f/D.Gray-man/+/-/s7/p23/m500/sc/n/d.gray-man/w'`
 
     >>  found: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
     >> change: '             d.gray-man', status: complete, progress: 500 / 500, score:  7 / 10, id: 0
     >> change saved!
+
+Или поиск записи с учётом экранирования
+`$ ./list <database> 'f/"Super/ Movie/ 4"'`
+
+    >> record not found
 
 Добавление новой записи:
 `$ ./list <database> 'a/Super Movie 4/p1/m100/s7/sp/w'`
@@ -41,7 +46,7 @@ Anime Base (alpha version)
     >> change saved!
 
 Удаление нескольких записей:
-`$ ./list <database> 'f/"D.*"/f/"Code:.*"/d/w'`
+`$ ./list <database> 'f/D.*/f/Code:.*/d/w'`
 
 Или используя regex:
 `$ ./list <database> 'f/"D.*|Code:.*"/d/w'`
@@ -67,4 +72,4 @@ Anime Base (alpha version)
      > select:
 
 #### Ссылки:
-[[1](http://cpprocks.com/wp-content/uploads/c++11-regex-cheatsheet.pdf)]: c++0x regex
+[1] [c++0x regex](http://cpprocks.com/wp-content/uploads/c++11-regex-cheatsheet.pdf)
