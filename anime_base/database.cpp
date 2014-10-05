@@ -84,9 +84,9 @@ void insert_with_update( std::vector< size_t > & id, std::vector< size_t > & cha
 
 void anibase::run_regexp( std::string regexp )
 {
+    bool save_flag = false, delete_flag = false;
     size_t update = 0, id_curr = 0, eid = 0;
     std::vector< size_t > id, changed;
-    bool save_flag = false;
     token_t regexp_token;
 
     tokenize( regexp, "/" );
@@ -149,6 +149,7 @@ void anibase::run_regexp( std::string regexp )
                     database.erase( database.begin() + a );
                 }
                 id.clear();
+                delete_flag = true;
                 break;
             case 'f':
                 i++;
@@ -246,6 +247,12 @@ void anibase::run_regexp( std::string regexp )
     }
     if ( update > 0 ) {
         insert_with_update( id, changed );
+    } else if ( id.size() == 0 && delete_flag == false ){
+#ifdef _WIN32
+        std::cout << ">> record not found" << std::endl;
+#else
+        std::cout << "\e[0;37m>> record not found\e[0m" << std::endl;
+#endif
     }
     if ( changed.size() > 0 ) {
         std::sort( changed.begin(), changed.end() );
@@ -379,7 +386,7 @@ void anibase::get_id_by_name( std::string name, std::vector< size_t > & id )
     std::regex regex_str;
 
     try {
-        regex_str = name.substr( 1, name.length() - 2 );
+        regex_str = ( name[0] == '\"' ) ? name.substr( 1, name.length() - 2 ) : name;
     } catch ( std::regex_error& e ){
         if ( e.code() == std::regex_constants::error_badrepeat ) {
             std::cerr << "[error]: Repeat was not preceded by a valid regular expression." << std::endl;
