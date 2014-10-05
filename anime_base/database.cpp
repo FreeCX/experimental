@@ -108,6 +108,7 @@ void anibase::run_regexp( std::string regexp )
                     if ( ( p.progress_cur >= p.progress_max && p.progress_max != 0 ) ||
                          p.status == get_status_id( "complete" ) ) {
                         p.progress_cur = p.progress_max;
+                        p.status = get_status_id( "complete" );
                     }
                 }
                 update++;
