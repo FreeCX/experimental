@@ -48,13 +48,13 @@ Anime Base (alpha version)
     >> change saved!
 
 Импорт данных из xml файла ( перепишет database )
-`$ ./list <database> 'r/<xml-file>'/w`
+`$ ./list <database> 'r/<xml-file>/w'`
 
     >> xml loaded
     >> change saved!
 
 Импорт данных из xml файла и добавление в базу
-`$ ./list <database> 'x/<xml-file>'/w`
+`$ ./list <database> 'x/<xml-file>/w'`
 
     >> xml merged
     >> change saved!
