@@ -1,11 +1,12 @@
 #include "database.hpp"
 
 const char * status_list[] = {
-    (char *) "wrong",
-    (char *) "complete",
-    (char *) "drop",
-    (char *) "plan",
-    (char *) "watch",
+    (const char *) "wrong",
+    (const char *) "complete",
+    (const char *) "drop",
+    (const char *) "plan",
+    (const char *) "watch",
+    (const char *) "hold",
     nullptr
 };
 const char regexp_info[] =
@@ -19,9 +20,11 @@ const char regexp_info[] =
     " l        -- вывести весь список\n"
     " m{число} -- установить максимальный номер серии { ? в случае онгоинга }\n"
     " n        -- изменить имя на новое [ n/имя | n/\"имя\" ]\n"
+    " r        -- загрузить xml файл [ r/имя | r/\"путь-до-файла\" ]\n"
     " p{число} -- установить номер серии на { число }\n"
     " s{буква} -- установить статуc { c -- complete, d -- drop, p -- plan, w -- watch }\n"
     " s{число} -- установить рейтинг { число }\n"
+    " x        -- объеденить базу и xml файл [ r/имя | r/\"путь-до-файла\" ]\n"
     " w        -- записать изменения в базу\n"
     ">> example: f/\"D.Gray-man\"/+/-/s7/p23/sc/n/d.gray-man/w";
 
@@ -56,6 +59,24 @@ bool anibase::read_database( std::string filename )
     return true;
 }
 
+void anibase::read_xml( std::string xml )
+{
+    database.clear();
+    import_xml( database, xml );
+    std::sort( database.begin(), database.end() );
+    database.erase( std::unique( database.begin(), database.end() ), database.end() );
+}
+
+void anibase::merge_xml( std::string xml )
+{
+    std::vector< anime_list_t > list;
+
+    import_xml( list, xml );
+    merge_database( list );
+    std::sort( database.begin(), database.end() );
+    database.erase( std::unique( database.begin(), database.end() ), database.end() );
+}
+
 void anibase::write_database( std::string filename )
 {
     std::ofstream write;
@@ -84,10 +105,11 @@ void insert_with_update( std::vector< size_t > & id, std::vector< size_t > & cha
 
 void anibase::run_regexp( std::string regexp )
 {
-    bool save_flag = false, delete_flag = false;
+    bool save_flag = false, delete_flag = false, xml_flag = false;
     size_t update = 0, id_curr = 0, eid = 0;
     std::vector< size_t > id, changed;
     token_t regexp_token;
+    std::string tmp;
 
     tokenize( regexp, "/" );
     for ( auto & t : token ) {
@@ -195,6 +217,21 @@ void anibase::run_regexp( std::string regexp )
                 id_curr = 0;
                 update++;
                 break;
+            case 'r':
+                i++;
+                xml_flag = true;
+                if ( regexp_token[i][0] == '\"' ) {
+                    tmp = regexp_token[i].substr( 1, regexp_token[i].length() - 2 );
+                } else {
+                    tmp = regexp_token[i];
+                }
+                read_xml( tmp );
+#ifdef _WIN32
+                std::cout << ">> xml loaded" << std::endl;
+#else
+                std::cout << "\e[0;37m>> xml loaded\e[0m" << std::endl;
+#endif
+                break;
             case 'm':
                 i++;
                 for ( auto & a : id ) {
@@ -241,13 +278,28 @@ void anibase::run_regexp( std::string regexp )
                 id.clear();
                 id_curr = 0;
                 break;
+            case 'x':
+                i++;
+                xml_flag = true;
+                if ( regexp_token[i][0] == '\"' ) {
+                    tmp = regexp_token[i].substr( 1, regexp_token[i].length() - 2 );
+                } else {
+                    tmp = regexp_token[i];
+                }
+                merge_xml( tmp );
+#ifdef _WIN32
+                std::cout << ">> xml merged" << std::endl;
+#else
+                std::cout << "\e[0;32m>> xml merged\e[0m" << std::endl;
+#endif
+                break;
             default:
                 break;
         }
     }
     if ( update > 0 ) {
         insert_with_update( id, changed );
-    } else if ( id.size() == 0 && delete_flag == false ){
+    } else if ( id.size() == 0 && delete_flag == false && xml_flag == false ){
 #ifdef _WIN32
         std::cout << ">> record not found" << std::endl;
 #else
@@ -409,4 +461,110 @@ size_t anibase::add_element( std::string name )
     tmp.name = ( name[0] == '\"' ) ? name.substr( 1, name.length() - 2 ) : name;
     database.push_back( tmp );
     return get_size();
+}
+
+size_t anibase::format_switch( std::string buf )
+{
+    const char * format[] = {
+        (const char *) "series_title",
+        (const char *) "my_status",
+        (const char *) "series_episodes",
+        (const char *) "my_watched_episodes",
+        (const char *) "my_score",
+        nullptr
+    };
+
+    for ( size_t i = 0; format[i] != nullptr; i++ ) {
+        if ( format[i] == buf ) {
+            return i + 1;
+        }
+    }
+    return 0;
+}
+
+size_t anibase::status_switch( std::string status )
+{
+    const char * status_switch[] = {
+        (const char *) "Completed",
+        (const char *) "Dropped",
+        (const char *) "Plan to Watch",
+        (const char *) "Watching",
+        (const char *) "On-Hold",
+    };
+
+    for ( size_t i = 0; status_switch[i] != nullptr; i++ ) {
+        if ( status_switch[i] == status ) {
+            return i+1;
+        }
+    }
+    return 0;
+}
+
+void anibase::import_xml( std::vector< anime_list_t > & list, std::string name )
+{
+    std::string delimeters = "</>";
+    std::ifstream read( name );
+    bool anime_flag = false;
+    std::string buffer;
+    anime_list_t tmp;
+
+    if ( read.is_open() == true ) {
+        while ( std::getline( read, buffer ) ) {
+            token.clear();
+            tokenize( buffer, delimeters );
+            if ( token[1] == "anime" ) {
+                if ( anime_flag == true ) {
+                    list.push_back( tmp );
+                }
+                anime_flag = !anime_flag;
+                continue;
+            }
+            if ( anime_flag == true ) {
+                switch ( format_switch( token[1] ) ) {
+                    case S_TITLE:
+                        tmp.name = token[2][0] != '!' ? token[2] : token[2].substr( 8, token[2].size() - 10 );
+                        break;
+                    case S_STATUS:
+                        tmp.status = status_switch( token[2] );
+                        break;
+                    case S_EPISODES:
+                        tmp.progress_max = std::stoi( token[2] );
+                        break;
+                    case S_WATCHED:
+                        tmp.progress_cur = std::stoi( token[2] );
+                        break;
+                    case S_SCORE:
+                        tmp.score = std::stoi( token[2] );
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        read.close();
+    }
+}
+
+void anibase::merge_database( std::vector< anime_list_t > & list )
+{
+    std::vector< anime_list_t > tmp;
+
+    std::sort( database.begin(), database.end() );
+    std::sort( list.begin(), list.end() );
+
+    for ( auto & a : database ) {
+        for ( auto & b : list ) {
+            if ( a.name == b.name ) {
+                if ( a.progress_cur < b.progress_cur ) {
+                    a = b;
+                    continue;
+                }
+            } else {
+                tmp.push_back( b );
+            }
+        }
+    }
+    database.reserve( database.size() + tmp.size() );
+    database.insert( database.end(), tmp.begin(), tmp.end() );
+    std::sort( database.begin(), database.end() );
 }

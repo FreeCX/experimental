@@ -18,6 +18,12 @@ struct anime_list_t {
     int progress_cur = 0;
     int progress_max = 0;
     int score = 0;
+    bool operator == ( const anime_list_t & p ) const {
+        return ( name == p.name );
+    }
+    bool operator < ( const anime_list_t & p ) const {
+        return ( name < p.name );
+    }
 };
 struct print_format_t {
     int max_name = 0;
@@ -27,10 +33,20 @@ struct print_format_t {
     int max_status = 0;
 };
 
+enum {
+    S_TITLE = 1,
+    S_STATUS = 2,
+    S_EPISODES = 3,
+    S_WATCHED = 4,
+    S_SCORE = 5
+};
+
 class anibase {
 public:
     ~anibase();
     bool read_database( std::string filename );
+    void read_xml( std::string xml );
+    void merge_xml( std::string xml );
     void write_database( std::string filename );
     void run_regexp( std::string regexp );
     void print_element( size_t id );
@@ -45,6 +61,10 @@ private:
     const char * get_status_str( size_t i );
     void update_print_format( print_format_t & fmt, anime_list_t & a );
     void print_one( print_format_t & fmt, size_t id );
+    void import_xml( std::vector< anime_list_t > & list, std::string name );
+    void merge_database( std::vector< anime_list_t > & list );
+    size_t format_switch( std::string buf );
+    size_t status_switch( std::string status );
     std::vector< anime_list_t > database;
     print_format_t null_format, format;
     std::string file_name;

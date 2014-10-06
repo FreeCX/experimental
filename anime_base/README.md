@@ -13,9 +13,11 @@ Anime Base (alpha version)
     l        -- вывести весь список
     m{число} -- установить максимальный номер серии { ? в случае онгоинга }
     n        -- изменить имя на новое [ n/имя | n/"имя" ]
+    r        -- загрузить xml файл [ r/имя | r/"путь-до-файла" ]
     p{число} -- установить номер серии на { число }
     s{буква} -- установить статуc { c -- complete, d -- drop, p -- plan, w -- watch }
     s{число} -- установить рейтинг { число }
+    x        -- объеденить базу и xml файл [ r/имя | r/"путь-до-файла" ]
     w        -- записать изменения в базу
 
 ##### Использование программы:
@@ -43,6 +45,18 @@ Anime Base (alpha version)
 
     >> append: '        Super\ Movie\ 4', status:     plan, progress:   0 /   ?, score:  0 / 10, id: 3
     >> change: '        Super\ Movie\ 4', status:     plan, progress:   1 /   ?, score:  7 / 10, id: 3
+    >> change saved!
+
+Импорт данных из xml файла ( перепишет <database> )
+`$ ./list <database> 'r/<xml-file>'/w`
+
+    >> xml loaded
+    >> change saved!
+
+Импорт данных из xml файла и добавление в базу
+`$ ./list <database> 'x/<xml-file>'/w`
+
+    >> xml merged
     >> change saved!
 
 Удаление нескольких записей:
