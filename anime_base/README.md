@@ -47,7 +47,7 @@ Anime Base (alpha version)
     >> change: '        Super\ Movie\ 4', status:     plan, progress:   1 /   ?, score:  7 / 10, id: 3
     >> change saved!
 
-Импорт данных из xml файла ( перепишет <database> )
+Импорт данных из xml файла ( перепишет database )
 `$ ./list <database> 'r/<xml-file>'/w`
 
     >> xml loaded
