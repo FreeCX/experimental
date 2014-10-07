@@ -2,8 +2,9 @@
 #include <unistd.h>
 #include "simulator.h"
 
-simulator::simulator( int count, int segment, float r )
+simulator::simulator( int count, int segment, float r, float dx, float dy )
 {
+    float ix = -dx, iy = -dy;
     int j = 0;
 
     srand( time( NULL ) );
@@ -20,11 +21,17 @@ simulator::simulator( int count, int segment, float r )
     _vertex[j++] = 1.0f;
     _vertex[j++] = 0.0f;
     for ( int i = 0; i < _pcount; i++ ) {
-        _pobj[i].p = vector2( rand()%60 - 30.0f, rand()%60 - 30.0f );
+        _pobj[i].p = vector2( ix, iy );
         _pobj[i].v = vector2( (rand()%100 - 50.0f)/10.0f, (rand()%100 - 50.0f)/10.0f );
         _pobj[i].a = vector2( 0.0f, 0.0f );
+        if ( ix >= dx ) {
+            ix = -dx;
+            iy += _r * 2.0f;
+        } else {
+            ix += _r * 2.0f;
+        }
     }
-} 
+}
 
 simulator::~simulator()
 {
@@ -48,19 +55,17 @@ void simulator::setline( float x0, float y0, float x1, float y1 )
 
 void simulator::p_collide( int i, int j )
 {
-    float rad = 2.0f * _r;
-    vector2 v1 = _pobj[i].v, v2 = _pobj[i].v;
-    vector2 delta = _pobj[i].p - _pobj[j].p;
-    vector2 n = ( _pobj[j].p - _pobj[i].p ).norm(), m;
+    float d = ( _pobj[i].p - _pobj[j].p ).length() - 2.0f * _r;
+    vector2 v1 = _pobj[i].v, v2 = _pobj[j].v;
+    vector2 n = ( _pobj[j].p - _pobj[i].p ).norm();
+    vector2 m = vector2( n.y, -n.x );
 
-    m = vector2( n.y, -n.x );
-    if ( delta.length() < rad ) {
-    // if ( ( delta.length() < rad ) && ( v2 - v1 ).dot( n ) < 0 ) {
-        _pobj[i].v = vector2( vector2( v2.dot( n ), v1.dot( m ) ).dot( n ), 
-                             vector2( v2.dot( n ), v1.dot( m ) ).dot( m ) );
-        _pobj[j].v = vector2( vector2( v1.dot( n ), v2.dot( m ) ).dot( n ), 
-                             vector2( v1.dot( n ), v2.dot( m ) ).dot( m ) );
-    } 
+    if ( d <= 0 ) {
+        _pobj[i].v = vector2( vector2( v2.dot( n ), v1.dot( m ) ).dot( n ),
+                              vector2( v2.dot( n ), v1.dot( m ) ).dot( m ) );
+        _pobj[j].v = vector2( vector2( v1.dot( n ), v2.dot( m ) ).dot( n ),
+                              vector2( v1.dot( n ), v2.dot( m ) ).dot( m ) );
+    }
 }
 
 void simulator::l_collide( int i, int j )
@@ -100,7 +105,7 @@ void simulator::draw( void )
         glTranslatef( _pobj[i].p.x, _pobj[i].p.y, 0 );
         glScalef( _r, _r, 0 );
         glVertexPointer( 2, GL_FLOAT, 0, _vertex );
-        glDrawArrays( GL_POLYGON, 0, _segment + 1 );
+        glDrawArrays( GL_LINE_STRIP, 0, _segment + 1 );
         glDisableClientState( GL_VERTEX_ARRAY );
         glPopMatrix();
     }

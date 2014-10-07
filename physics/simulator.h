@@ -21,10 +21,10 @@ typedef struct {
 
 class simulator {
 public:
-    simulator( int, int, float );
+    simulator( int, int, float, float, float );
     ~simulator();
     void setline( const vector2, const vector2 );
-    void setline( float x0, float y0, float x1, float y1 );
+    void setline( float, float, float, float );
     void step( float );
     void draw( void );
 private:
