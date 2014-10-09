@@ -1,7 +1,7 @@
 #include <GL/glut.h>
 #include <cmath>
-#include "vector.h"
-#include "simulator.h"
+#include "vector.hpp"
+#include "simulator.hpp"
 
 int w_width = 500;
 int w_height = 500;
@@ -26,6 +26,8 @@ void program_init( void )
     lab.setline( 55.0f, 55.0f, 55.0f, -55.0f );
     lab.setline( -55.0f, 55.0f, 55.0f, 55.0f );
     lab.setline( -55.0f, -55.0f, 55.0f, -55.0f );
+
+    lab.setline( -30.0f, -30.0f, 30.0f, 30.0f );
 }
 
 void program_render( void )

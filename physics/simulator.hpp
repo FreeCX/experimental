@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <ctime>
 #include <vector>
-#include "vector.h"
+#include "vector.hpp"
 
 typedef struct {
     vector2 p;

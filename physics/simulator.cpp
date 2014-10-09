@@ -1,6 +1,6 @@
 #include <iostream>
 #include <unistd.h>
-#include "simulator.h"
+#include "simulator.hpp"
 
 simulator::simulator( int count, int segment, float r, float dx, float dy )
 {
@@ -60,7 +60,7 @@ void simulator::p_collide( int i, int j )
     vector2 n = ( _pobj[j].p - _pobj[i].p ).norm();
     vector2 m = vector2( n.y, -n.x );
 
-    if ( d <= 0 ) {
+    if ( d <= 1E-1 ) {
         _pobj[i].v = vector2( vector2( v2.dot( n ), v1.dot( m ) ).dot( n ),
                               vector2( v2.dot( n ), v1.dot( m ) ).dot( m ) );
         _pobj[j].v = vector2( vector2( v1.dot( n ), v2.dot( m ) ).dot( n ),
@@ -79,7 +79,8 @@ void simulator::l_collide( int i, int j )
     vector2 k = n - vector2( A, B ).norm();
 
     if ( d <= _r ) {
-        _pobj[i].v = m * _pobj[i].v.dot( k );
+        // _pobj[i].v = m * _pobj[i].v.dot( k );
+        _pobj[i].v = -_pobj[i].v;
     }
 }
 
