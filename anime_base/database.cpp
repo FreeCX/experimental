@@ -297,12 +297,13 @@ void anibase::run_regexp( std::string regexp )
                 i++;
                 for ( auto & a : id ) {
                     auto & p = database[a];
-                    p.status = get_short_status_id( regexp_token[i][0] );
-                    if ( regexp_token[i][0] == 'c' ) {
-                        p.progress_cur = p.progress_max;
-                    }
                     if ( isdigit( regexp_token[i][0] ) ) {
                         p.score = std::stoi( regexp_token[i] );
+                    } else {
+                        p.status = get_short_status_id( regexp_token[i][0] );
+                    }
+                    if ( regexp_token[i][0] == 'c' ) {
+                        p.progress_cur = p.progress_max;
                     }
                 }
                 update++;
