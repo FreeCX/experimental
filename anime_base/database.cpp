@@ -22,7 +22,7 @@ const char regexp_info[] =
     " n        -- изменить имя на новое [ n/имя | n/\"имя\" ]\n"
     " r        -- загрузить xml файл [ r/имя | r/\"путь-до-файла\" ]\n"
     " p{число} -- установить номер серии на { число }\n"
-    " s{буква} -- установить статуc { c -- complete, d -- drop, p -- plan, w -- watch }\n"
+    " s{буква} -- установить статуc { c -- complete, d -- drop, p -- plan, w -- watch, h -- hold }\n"
     " s{число} -- установить рейтинг { число }\n"
     " x        -- объеденить базу и xml файл [ r/имя | r/\"путь-до-файла\" ]\n"
     " w        -- записать изменения в базу\n"
@@ -126,6 +126,9 @@ void anibase::run_regexp( std::string regexp )
             case '+':
                 for ( auto & a : id ) {
                     auto & p = database[a];
+                    if ( p.progress_cur == 0 && p.status == get_status_id( "plan" ) ) {
+                        p.status = get_status_id( "watch" );
+                    }
                     p.progress_cur++;
                     if ( ( p.progress_cur >= p.progress_max && p.progress_max != 0 ) ||
                          p.status == get_status_id( "complete" ) ) {
@@ -208,6 +211,9 @@ void anibase::run_regexp( std::string regexp )
                 i++;
                 for ( auto & a : id ) {
                     auto & p = database[a];
+                    if ( p.progress_cur == 0 && p.status == get_status_id( "plan" ) ) {
+                        p.status = get_status_id( "watch" );
+                    }
                     p.progress_cur = std::stoi( regexp_token[i] );
                     if ( p.progress_cur >= p.progress_max && p.progress_max != 0 ) {
                         p.progress_cur = p.progress_max;
@@ -261,6 +267,9 @@ void anibase::run_regexp( std::string regexp )
                             break;
                         case 'w':
                             p.status = get_status_id( "watch" );
+                            break;
+                        case 'h':
+                            p.status = get_status_id( "hold ");
                             break;
                         case '0'...'9':
                             p.score = std::stoi( regexp_token[i] );
@@ -552,6 +561,7 @@ void anibase::merge_database( std::vector< anime_list_t > & list )
     std::sort( database.begin(), database.end() );
     std::sort( list.begin(), list.end() );
 
+    // написать вменяемый код
     for ( auto & a : database ) {
         for ( auto & b : list ) {
             if ( a.name == b.name ) {
