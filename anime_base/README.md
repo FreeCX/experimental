@@ -9,6 +9,7 @@ Anime Base (alpha version)
     a        -- добавить элемент [ a/имя | a/"имя" ]
     d        -- удалить элементы { найденые элементы параметром f }
     f        -- поиск по названию [ f/имя, regex | f/"имя", "regex" ] [1]
+    g{??}    -- поиск по статусу s{буква}, номеру серии p{число}, оценке m{число}
     i        -- распечатать эту информацию
     l        -- вывести весь список
     m{число} -- установить максимальный номер серии { ? в случае онгоинга }
@@ -32,6 +33,13 @@ Anime Base (alpha version)
 `$ ./list <database> 'f/"Super/ Movie/ 4"'`
 
     >> record not found
+
+Поиск по одному из параметров {статус, номер серии, рейтинг}
+`$ ./list <database> 'gsc/gm8/gp6'`
+
+    >>  found: '          Code: Breaker', status: complete, progress:  13 /  13, score:  7 / 10, id: 1
+    >>  found: '             D.Gray-man', status:    watch, progress:  77 / 103, score:  8 / 10, id: 0
+    >>  found: 'Ef - A Tale of Memories', status:     plan, progress:   6 /  13, score:  7 / 10, id: 2
 
 Добавление новой записи:
 `$ ./list <database> 'a/Super Movie 4/p1/m100/s7/sp/w'`

@@ -16,6 +16,7 @@ const char regexp_info[] =
     " a        -- добавить элемент [ a/имя | a/\"имя\" ]\n"
     " d        -- удалить элементы { найденые элементы параметром f }\n"
     " f        -- поиск по названию [ f/\"имя или regex\" ]\n"
+    " g{??}    -- поиск по статусу s{буква}, номеру серии p{число}, оценке m{число}\n"
     " i        -- распечатать эту информацию\n"
     " l        -- вывести весь список\n"
     " m{число} -- установить максимальный номер серии { ? в случае онгоинга }\n"
@@ -113,7 +114,7 @@ void anibase::run_regexp( std::string regexp )
 
     tokenize( regexp, "/" );
     for ( auto & t : token ) {
-        if ( t[0] == 's' || t[0] == 'p' || t[0] == 'm' ) {
+        if ( t[0] == 's' || t[0] == 'p' || t[0] == 'm' || t[0] == 'g' ) {
             regexp_token.push_back( t.substr( 0, 1 ) );
             regexp_token.push_back( t.substr( 1 ) );
         } else {
@@ -189,6 +190,48 @@ void anibase::run_regexp( std::string regexp )
                 }
                 id_curr = id.size();
                 break;
+            case 'g':
+                i++;
+                for ( size_t j = 0; j < database.size(); j++ ) {
+                    auto & a = database[j];
+                    std::string s;
+                    int pm = 0;
+                    if ( regexp_token[i][0] != 's' ) {
+                        s = regexp_token[i].substr( 1, regexp_token[i].length() - 1 );
+                        if ( s.length() > 0 ) {
+                            pm = std::stoi( s );
+                        } else {
+                            continue;
+                        }
+                    }
+                    switch ( regexp_token[i][0] ) {
+                        case 's':
+                            if ( a.status == get_short_status_id( regexp_token[i][1] ) ) {
+                                id.push_back( j );
+                            }
+                            break;
+                        case 'p':
+                            if ( a.progress_cur == pm ) {
+                                id.push_back( j );
+                            }
+                            break;
+                        case 'm':
+                            if ( a.score == pm ) {
+                                id.push_back( j );
+                            }
+                            break;
+                    }
+                }
+                for ( size_t a = id_curr; a < id.size(); a++ ) {
+#ifdef _WIN32
+                    std::cout << ">>  found:";
+#else
+                    std::cout << "\e[0;37m>>  found:\e[0m";
+#endif
+                    print_one( format, id[a] );
+                }
+                id_curr = id.size();
+                break;
             case 'i':
                 std::cout << regexp_info << std::endl;
                 break;
@@ -254,28 +297,12 @@ void anibase::run_regexp( std::string regexp )
                 i++;
                 for ( auto & a : id ) {
                     auto & p = database[a];
-                    switch ( regexp_token[i][0] ) {
-                        case 'c':
-                            p.status = get_status_id( "complete" );
-                            p.progress_cur = p.progress_max;
-                            break;
-                        case 'd':
-                            p.status = get_status_id( "drop" );
-                            break;
-                        case 'p':
-                            p.status = get_status_id( "plan" );
-                            break;
-                        case 'w':
-                            p.status = get_status_id( "watch" );
-                            break;
-                        case 'h':
-                            p.status = get_status_id( "hold ");
-                            break;
-                        case '0'...'9':
-                            p.score = std::stoi( regexp_token[i] );
-                            break;
-                        default:
-                            break;
+                    p.status = get_short_status_id( regexp_token[i][0] );
+                    if ( regexp_token[i][0] == 'c' ) {
+                        p.progress_cur = p.progress_max;
+                    }
+                    if ( isdigit( regexp_token[i][0] ) ) {
+                        p.score = std::stoi( regexp_token[i] );
                     }
                 }
                 update++;
@@ -376,6 +403,16 @@ int anibase::get_status_id( const std::string & status )
 {
     for ( size_t i = 0; status_list[i] != nullptr; i++ ) {
         if ( status_list[i] == status ) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+int anibase::get_short_status_id( const char status )
+{
+    for ( size_t i = 0; status_list[i] != nullptr; i++ ) {
+        if ( status_list[i][0] == status ) {
             return i;
         }
     }

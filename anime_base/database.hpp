@@ -58,6 +58,7 @@ public:
 private:
     void tokenize( const std::string & data, const std::string & delimeters );
     int get_status_id( const std::string & status );
+    int get_short_status_id( const char status );
     const char * get_status_str( size_t i );
     void update_print_format( print_format_t & fmt, anime_list_t & a );
     void print_one( print_format_t & fmt, size_t id );
