@@ -1,7 +1,7 @@
 #include "database.hpp"
 
 const char * status_list[] = {
-    (const char *) "wrong",
+    (const char *) "<error>",
     (const char *) "complete",
     (const char *) "drop",
     (const char *) "plan",
@@ -597,7 +597,6 @@ void anibase::merge_database( std::vector< anime_list_t > & list )
 
     std::sort( database.begin(), database.end() );
     std::sort( list.begin(), list.end() );
-
     // написать вменяемый код
     for ( auto & a : database ) {
         for ( auto & b : list ) {
