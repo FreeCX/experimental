@@ -357,7 +357,7 @@ void anibase::run_regexp( std::string regexp )
     }
     if ( update > 0 ) {
         insert_with_update( id, changed );
-    } else if ( id.size() == 0 && delete_flag == false && xml_flag == false ){
+    } else if ( id.size() == 0 && delete_flag == false && xml_flag == false && save_flag == false ){
 #ifdef _WIN32
         std::cout << ">> record not found" << std::endl;
 #else
