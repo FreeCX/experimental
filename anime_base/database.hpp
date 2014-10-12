@@ -47,6 +47,7 @@ public:
     bool read_database( std::string filename );
     void read_xml( std::string xml );
     void merge_xml( std::string xml );
+    void export_xml( std::string xml );
     void write_database( std::string filename );
     void run_regexp( std::string regexp );
     void print_element( size_t id );
