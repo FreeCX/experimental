@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -36,4 +37,5 @@ int main( void )
     for ( auto & i : token ) {
         std::cout << "token: " << i << std::endl;
     }
+    return 0;
 }
