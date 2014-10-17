@@ -135,6 +135,7 @@ void game_event( SDL_Event *event )
             quit_flag = 1;
             break;
         default:
+            break;
     }
 }
 
