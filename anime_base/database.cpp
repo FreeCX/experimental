@@ -139,7 +139,7 @@ void insert_with_update( std::vector< size_t > & id, std::vector< size_t > & cha
 void anibase::run_regexp( std::string regexp )
 {
     bool save_flag = false, delete_flag = false, xml_flag = false;
-    size_t update = 0, id_curr = 0, eid = 0;
+    size_t update = 0, id_curr = 0, eid = 0, counter = 0;
     std::vector< size_t > id, changed;
     token_t regexp_token;
     std::string tmp;
@@ -199,13 +199,16 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
                     std::cout << ">> delete:";
 #else
-                    std::cout << "\e[0;31m>> delete:\e[0m";
+                    std::cout << "\e[0;31m>> delete:";
 #endif
                     print_one( format, a );
                 }
                 for ( auto & a : id ) {
                     database.erase( database.begin() + a );
                 }
+#ifdef _linux_
+                std::cout << "\e[0m";
+#endif
                 id.clear();
                 delete_flag = true;
                 break;
@@ -232,9 +235,18 @@ void anibase::run_regexp( std::string regexp )
                     std::cout << ">>  found:";
 #else
                     std::cout << "\e[0;37m>>  found:\e[0m";
+                    if ( counter % 2 == 0 ) {
+                        std::cout << "\e[1;37m";
+                    } else {
+                        std::cout << "\e[0;34m";
+                    }
+                    counter++;
 #endif
                     print_one( format, id[a] );
                 }
+#ifdef _linux_
+                std::cout << "\e[0m";
+#endif
                 id_curr = id.size();
                 break;
             case 'g':
@@ -274,14 +286,23 @@ void anibase::run_regexp( std::string regexp )
                     std::cout << ">>  found:";
 #else
                     std::cout << "\e[0;37m>>  found:\e[0m";
+                    if ( counter % 2 == 0 ) {
+                        std::cout << "\e[1;37m";
+                    } else {
+                        std::cout << "\e[0;34m";
+                    }
+                    counter++;
 #endif
                     print_one( format, id[a] );
                 }
+#ifdef _linux_
+                std::cout << "\e[0m";
+#endif
                 id_curr = id.size();
                 break;
             case 'i':
                 std::cout << regexp_info << std::endl;
-                break;
+                return;
             case 'n':
                 i++;
                 for ( auto & a : id ) {
@@ -296,7 +317,7 @@ void anibase::run_regexp( std::string regexp )
                 break;
             case 'l':
                 print_database();
-                break;
+                return;
             case 'p':
                 i++;
                 for ( auto & a : id ) {
@@ -383,7 +404,7 @@ void anibase::run_regexp( std::string regexp )
     }
     if ( update > 0 ) {
         insert_with_update( id, changed );
-    } else if ( id.size() == 0 && delete_flag == false && xml_flag == false ){
+    } else if ( id.size() == 0 && delete_flag == false && xml_flag == false && save_flag == false ){
 #ifdef _WIN32
         std::cout << ">> record not found" << std::endl;
 #else
@@ -398,6 +419,12 @@ void anibase::run_regexp( std::string regexp )
             std::cout << ">> change:";
 #else
             std::cout << "\e[0;32m>> change:\e[0m";
+            if ( counter % 2 == 0 ) {
+                std::cout << "\e[1;37m";
+            } else {
+                std::cout << "\e[0;34m";
+            }
+            counter++;
 #endif
             print_one( format, a );
         }
@@ -509,8 +536,14 @@ void anibase::print_element( size_t id )
 void anibase::print_database( void )
 {
     for ( size_t i = 0; i < database.size(); i++ ) {
+        if ( i % 2 == 0 ) {
+            std::cout << "\e[1;37m";
+        } else {
+            std::cout << "\e[0;34m";
+        }
         print_one( format, i );
     }
+    std::cout << "\e[0m";
 }
 
 size_t anibase::get_size( void )
