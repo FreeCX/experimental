@@ -24,7 +24,6 @@ const char regexp_info[] =
     " +        -- номер серии +1\n"
     " a        -- добавить элемент [ a/имя | a/\"имя\" ]\n"
     " d        -- удалить элементы { найденые элементы параметром f }\n"
-    " e        -- экспортировать список в xml [ e/имя | e/\"имя\" ]\n"
     " f        -- поиск по названию [ f/\"имя или regex\" ]\n"
     " g{??}    -- поиск по статусу s{буква}, номеру серии p{число}, оценке m{число}\n"
     " i        -- распечатать эту информацию\n"
@@ -35,7 +34,7 @@ const char regexp_info[] =
     " p{число} -- установить номер серии на { число }\n"
     " s{буква} -- установить статуc { c -- complete, d -- drop, p -- plan, w -- watch, h -- hold }\n"
     " s{число} -- установить рейтинг { число }\n"
-    " x        -- объеденить базу и xml файл [ r/имя | r/\"путь-до-файла\" ]\n"
+    " x        -- объеденить базу и xml файл [ x/имя | x/\"путь-до-файла\" ]\n"
     " w        -- записать изменения в базу\n"
     ">> example: f/\"D.Gray-man\"/+/-/s7/p23/sc/n/d.gray-man/w";
 
@@ -86,28 +85,6 @@ void anibase::merge_xml( std::string xml )
     merge_database( list );
     std::sort( database.begin(), database.end() );
     database.erase( std::unique( database.begin(), database.end() ), database.end() );
-}
-
-void anibase::export_xml( std::string xml )
-{
-    std::ofstream write( xml );
-
-    if ( write.is_open() == true ) {
-        write << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        write << "<myanimelist>\n";
-        for ( auto & a : database ) {
-            write << "<anime>\n";
-            write << "<series_title>" << a.name << "</series_title>\n";
-            write << "<series_episodes>" << a.progress_max << "</series_episodes>\n";
-            write << "<my_watched_episodes>" << a.progress_cur << "</my_watched_episodes>\n";
-            write << "<my_score>" << a.score << "</my_score>\n";
-            write << "<my_status>" << status_switch_list[a.status] << "</my_status>\n";
-            write << "<my_comments/>\n";
-            write << "</anime>\n";
-        }
-        write << "</myanimelist>\n";
-        write.close();
-    }
 }
 
 void anibase::write_database( std::string filename )
@@ -211,21 +188,6 @@ void anibase::run_regexp( std::string regexp )
 #endif
                 id.clear();
                 delete_flag = true;
-                break;
-            case 'e':
-                i++;
-                xml_flag = true;
-                if ( regexp_token[i][0] == '\"' ) {
-                    tmp = regexp_token[i].substr( 1, regexp_token[i].length() - 1 );
-                } else {
-                    tmp = regexp_token[i];
-                }
-                export_xml( tmp );
-#ifdef _WIN32
-                std::cout << ">> xml exported" << std::endl;
-#else
-                std::cout << "\e[0;37m>> xml exported\e[0m" << std::endl;
-#endif
                 break;
             case 'f':
                 i++;
