@@ -1,7 +1,7 @@
 PROG=physics
 SOURCES=vector.cpp simulator.cpp physics.cpp
-CFLAGS=-O3 -W -Wall
-LDFLAGS=
+CFLAGS=-Ofast -W -Wall
+LDFLAGS=-std=c++11
 OS=$(shell uname -s)
 ARCH=$(shell uname -m)
 
@@ -16,17 +16,17 @@ DEPS := $(patsubst %.o, %.d, $(OBJS))
 
 $(PROG): $(OBJS) $(DEPS)
 	$(CXX) $(OBJS) -o $@ $(CFLAGS)
- 
+
 %.o: %.cpp %.d
 	$(CXX) $(LDFLAGS) -c $< -o $@
- 
+
 %.d: %.cpp
-	@set -e; $(CC) -M $< | \
+	@set -e; $(CXX) -M $< | \
 		sed -e 's%\($*\)\.o[ :]*%\1.o $@ : %g' > $@; \
 		[ -s $@ ] || rm -f $@
 	@echo create $@
-	
+
 clean:
 	$(RM) $(PROG) $(OBJS) $(DEPS) *~
- 
+
 -include $(DEPS)

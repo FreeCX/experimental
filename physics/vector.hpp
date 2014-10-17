@@ -5,6 +5,10 @@
 #include <cmath>
 #include <float.h>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 class vector2 {
     friend std::ostream & operator << ( std::ostream &os, const vector2& v );
 public:
