@@ -39,4 +39,6 @@ private:
     float *_vertex;
 };
 
+const float fric_coeff = 0.98f;
+
 #endif

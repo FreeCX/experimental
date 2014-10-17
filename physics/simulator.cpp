@@ -55,16 +55,18 @@ void simulator::setline( float x0, float y0, float x1, float y1 )
 
 void simulator::p_collide( int i, int j )
 {
-    float d = ( _pobj[i].p - _pobj[j].p ).length() - 2.0f * _r;
-    vector2 v1 = _pobj[i].v, v2 = _pobj[j].v;
-    vector2 n = ( _pobj[j].p - _pobj[i].p ).norm();
-    vector2 m = vector2( n.y, -n.x );
+    vector2 & v1 = _pobj[i].v, & v2 = _pobj[j].v;
+    vector2 & p1 = _pobj[i].p, & p2 = _pobj[j].p;
+    vector2 p = p2 - p1;
+    vector2 n = p.norm();
+    float d = 2.0f * _r - p.length();
 
-    if ( d <= 1E-1 ) {
-        _pobj[i].v = vector2( vector2( v2.dot( n ), v1.dot( m ) ).dot( n ),
-                              vector2( v2.dot( n ), v1.dot( m ) ).dot( m ) );
-        _pobj[j].v = vector2( vector2( v1.dot( n ), v2.dot( m ) ).dot( n ),
-                              vector2( v1.dot( n ), v2.dot( m ) ).dot( m ) );
+    if ( d >= 0 ) {
+        p1 += -n * d;
+        p2 +=  n * d;
+        float tmp = v1.length();
+        v1 = -n * v2.length() * fric_coeff;
+        v2 =  n * tmp * fric_coeff;
     }
 }
 
@@ -78,8 +80,7 @@ void simulator::l_collide( int i, int j )
     vector2 m = vector2( A, B ).norm() + n;
     vector2 k = n - vector2( A, B ).norm();
 
-    if ( d <= _r ) {
-        // _pobj[i].v = m * _pobj[i].v.dot( k );
+    if ( d <= 2.0f * _r ) {
         _pobj[i].v = -_pobj[i].v;
     }
 }
