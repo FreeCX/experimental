@@ -9,7 +9,7 @@ int win_id = 0;
 GLfloat n = 60.0f;
 GLfloat aspect;
 
-simulator lab( 300, 12, 2.0f, 50.0f, 50.0f );
+simulator lab( 500, 12, 2.0f, 50.0f, 50.0f );
 
 void program_init( void )
 {
@@ -22,12 +22,6 @@ void program_init( void )
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-    lab.setline( -55.0f, 55.0f, -55.0f, -55.0f );
-    lab.setline( 55.0f, 55.0f, 55.0f, -55.0f );
-    lab.setline( -55.0f, 55.0f, 55.0f, 55.0f );
-    lab.setline( -55.0f, -55.0f, 55.0f, -55.0f );
-
-    lab.setline( -30.0f, -30.0f, 30.0f, 30.0f );
 }
 
 void program_render( void )
