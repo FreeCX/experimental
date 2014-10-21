@@ -1,13 +1,15 @@
 #include "string.h"
 
-void string_copy( char *src, char *dst )
+void string_copy( const char *src, char *dst )
 {
     size_t i = 0;
 
-    while ( ( dst[i++] = src[i] ) != NULL_STR );
+    while ( ( dst[i] = src[i] ) != NULL_STR ) {
+        i++;
+    }
 }
 
-void string_copy_n( char *src, char *dst, size_t start, size_t length )
+void string_copy_n( const char *src, char *dst, size_t start, size_t length )
 {
     size_t i = 0;
 

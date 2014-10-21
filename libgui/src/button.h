@@ -19,7 +19,7 @@ struct ui_button_flag {
     uint8 reserved : 4;
 };
 #pragma pack( pop )
-typedef ui_button_flag_t;
+typedef struct ui_button_flag ui_button_flag_t;
 
 #pragma pack( push, 1 )
 struct ui_button {

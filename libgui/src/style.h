@@ -1,6 +1,8 @@
 #ifndef __UI_STYLE_H__
 #define __UI_STYLE_H__
 
+#include "data.h"
+
 struct style_button {
     uint32 background_color;
     uint32 left_color;
@@ -10,7 +12,7 @@ struct style_button {
     uint32 focus_color;
     // add other styles: font ...
 };
-typedef stuct style_button style_button_t;
+typedef struct style_button style_button_t;
 
 struct ui_style {
     style_button_t button;

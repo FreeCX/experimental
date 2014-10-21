@@ -2,14 +2,14 @@
 
 double set_color[3] = { 0 };
 
-void ui_color_rgb2hsv( const uint32 color, double hsv[3] )
+void ui_color_rgb2hsv( const uint32 color, double hsv[] )
 {
     double rd = (double) ( color >> 16 ) / 255.0;
     double gd = (double) ( ( color >> 8 ) & 0xFF ) / 255.0;
     double bd = (double) ( color & 0xFF ) / 255.0;
     double max = fmax( rd, fmax( gd, bd ) );
     double min = fmin( rd, fmin( gd, bd ) );
-    double h, s, v = max;
+    double h = 0.0, s, v = max;
     double d = max - min;
 
     s = max == 0 ? 0 : d / max;
@@ -30,7 +30,7 @@ void ui_color_rgb2hsv( const uint32 color, double hsv[3] )
     hsv[2] = v;
 }
 
-void ui_color_hsv2rgb( uint32 *color, double hsv[3] )
+void ui_color_hsv2rgb( uint32 * color, double hsv[] )
 {
     double r, g, b;
     int i = (int)( hsv[0] * 6.0 );
@@ -72,9 +72,9 @@ void ui_color_setu( const uint32 color )
     set_color[2] = (double) ( color & 0xFF ) / 255.0;
 }
 
-void ui_color_setv( double color[3] )
+void ui_color_setv( double color[] )
 {
-    memcpy( set_color, color, sizeof( color ) );
+    memcpy( set_color, color, 3 * sizeof( double ) );
 }
 
 void ui_color_set3u( const uint8 red, const uint8 green, const uint8 blue )
