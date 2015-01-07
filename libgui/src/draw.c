@@ -20,7 +20,7 @@ void ui_draw_begin( uint8 type )
 {
     element_type = type;
     if ( data == NULL ) {
-        data = (float *) malloc( DATA_SIZE * sizeof( float ) );
+        data = ( float * ) malloc( DATA_SIZE * sizeof( float ) );
     }
 }
 
@@ -43,7 +43,7 @@ void ui_draw_end( void )
 {
     if ( data != NULL || current != 0 || element_type != UI_DRAW_NONE ) {
         if ( select_render <= fmt_size ) {
-            renders[select_render](); 
+            renders[select_render]();
         } else {
             ui_error_send( "unknown render" );
         }
@@ -54,9 +54,11 @@ void ui_draw_end( void )
 uint8 ui_null_render( void )
 {
     ui_error_send( "render is not set" );
+    return 0;
 }
 
 uint8 ui_opengl_render( void )
 {
     // input opengl render code
+    return 0;
 }

@@ -112,7 +112,7 @@ void font_draw( SDL_Renderer *r, font_table_t *t, const wchar_t *text, int x, in
 
 void game_init( void )
 {
-    window = SDL_CreateWindow( "Font Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+    window = SDL_CreateWindow( "Font Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
     if ( window == NULL ) {
         send_error( EXIT_FAILURE );
@@ -159,7 +159,7 @@ int main( int argc, char *argv[] )
 {
     setlocale( LC_CTYPE, "" );
     game_init();
-    while ( quit_flag == 1 ) {
+    while ( quit_flag == 0 ) {
         game_event( &event );
         game_render();
     }

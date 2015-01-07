@@ -22,13 +22,13 @@ void tokenize( token_t **a, const char *data, const char *delimeters )
         }
         next++;
     }
-    obj->name = (char **) malloc( sizeof( obj->size ) * sizeof( char * ) );
+    obj->name = ( char ** ) malloc( sizeof( obj->size ) * sizeof( char * ) );
     next = prev = n = 0;
     for ( i = 0; i < dat_length; i++ ) {
         for ( j = 0; j < del_length; j++ ) {
             if ( data[i] == delimeters[j] ) {
                 if ( next - prev >= 1 ) {
-                    obj->name[n] = (char *) malloc( ( next - prev + 1 ) * sizeof( char ) );
+                    obj->name[n] = ( char * ) malloc( ( next - prev + 1 ) * sizeof( char ) );
                     string_copy_n( data, obj->name[n], prev, next - prev - 1 );
                     prev = next + 1;
                     n++;
@@ -42,7 +42,7 @@ void tokenize( token_t **a, const char *data, const char *delimeters )
     *a = obj;
 }
 
-void free_token( token_t *data )
+void free_token( token_t * data )
 {
     size_t i;
 

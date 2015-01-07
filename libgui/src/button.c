@@ -7,7 +7,7 @@ ui_button_flag_t def = { 1, 0, 0, 1, 0 };
 uint16 ui_button_create( uint32 x, uint32 y, uint32 w, uint32 h, const char *label, ui_button_callback func )
 {
     size_t label_length = string_length( label );
-    ui_button_t *p = ( ui_button_t * ) calloc( sizeof( ui_button_t ) );
+    ui_button_t *p = ( ui_button_t * ) calloc( 1, sizeof( ui_button_t ) );
     assert( p != NULL );
     p->x_pos = x; p->y_pos = y;
     p->width = w; p->height = h;
@@ -61,7 +61,7 @@ void ui_button_label( uint16 id, const char *label )
 
 void ui_button_draw( void )
 {
-    ui_button_t *p = button_list
+    ui_button_t *p = button_list;
 
     while ( p != NULL ) {
         /* testing draw */
@@ -82,11 +82,11 @@ void ui_button_destroy( void )
     ui_button_t *p = button_list, *n;
 
     while ( p != NULL ) {
-        n = c->next;
+        n = p->next;
         if ( p->label != NULL ) {
             free( p->label );
         }
-        free( c );
-        c = n;
+        free( p );
+        p = n;
     }
 }

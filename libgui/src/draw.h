@@ -1,6 +1,7 @@
 #ifndef __UI_DRAW_H__
 #define __UI_DRAW_H__
 
+#include <string.h>
 #include "data.h"
 #include "error.h"
 
