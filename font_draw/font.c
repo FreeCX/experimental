@@ -1,5 +1,4 @@
 #include "font.h"
-#include "token.h"
 
 SDL_Window *window;
 SDL_Renderer *render;
@@ -20,17 +19,15 @@ void send_error( int code )
     exit( code );
 }
 
-int font_load( SDL_Renderer *r, font_table_t **t, const char *font )
-{
+int font_load( SDL_Renderer * r, font_table_t ** t, const char * font ) {
+    unsigned int text_size = 0, abc_size = 0;
     SDL_Texture *tex = NULL;
     font_table_t *a = NULL;
-    char tex_name[64];
-    char buffer[128];
     wint_t current = 0;
-    size_t load = 1, i = 0;
-    FILE *f;
-    token_t *token;
+    char * text_name;
+    size_t load = 1;
     int id = 0;
+    FILE * f;
 
     a = (font_table_t *) calloc( 1, sizeof( font_table_t ) );
     *t = a;
@@ -38,22 +35,23 @@ int font_load( SDL_Renderer *r, font_table_t **t, const char *font )
     if ( f == NULL ) {
         return A_ERROR_OPEN_FILE;
     }
-    do {
-        load = fread( &buffer[i], 1, 1, f );
-    } while ( buffer[i++] != '\0' );
-    tokenize( &token, buffer, " " );
-    strcpy( tex_name, token->name[0] );
-    a->t_width = atoi( token->name[1] );
-    a->t_height = atoi( token->name[2] );
-    free_token( token );
-    printf( "%s [ %dx%d ]\n", tex_name, a->t_width, a->t_height );
-    tex = IMG_LoadTexture( r, tex_name );
+    fread( &( text_size ), sizeof(int), 1, f );
+    fread( &( abc_size ), sizeof(int), 1, f );
+    text_name = (char *) malloc( text_size * sizeof(char) );
+    a->table = (int *) malloc( abc_size * sizeof(int) );
+    fread( text_name, text_size, 1, f );
+    fread( &( a->t_width ), sizeof(int), 1, f );
+    fread( &( a->t_height ), sizeof(int), 1, f );
+    printf( "%s [ %dx%d ]\n", text_name, a->t_width, a->t_height );
+    tex = IMG_LoadTexture( r, text_name );
+    free( text_name );
     a->font = tex;
     if ( tex == NULL ) {
         fclose( f );
         return A_ERROR_LOAD_TEXTURE;
     }
     SDL_QueryTexture( tex, NULL, NULL, &( a->f_width ), &( a->f_height ) );
+    fseek( f, sizeof(int) * 4 + text_size + 1, SEEK_SET );
     do {
         load = fread( &current, 2, 1, f );
         if ( current != L'\n' && current < 0xFFFF && load != 0 ) {
@@ -68,6 +66,7 @@ int font_load( SDL_Renderer *r, font_table_t **t, const char *font )
 void font_destroy( font_table_t *t )
 {
     SDL_DestroyTexture( t->font );
+    free( t->table );
     free( t );
 }
 

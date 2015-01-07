@@ -27,8 +27,8 @@ struct font_table {
     int f_width;
     int t_height;
     int t_width;
-    int table[0xFFFF];
-    SDL_Texture *font;
+    int * table;
+    SDL_Texture * font;
 };
 typedef struct font_table font_table_t;
 
