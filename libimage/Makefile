@@ -1,40 +1,28 @@
-PROG=libimage
-DIR_P=src
-SOURCES=$(DIR_P)/data.c $(DIR_P)/error.c $(DIR_P)/loader.c $(DIR_P)/pcx.c \
-	$(DIR_P)/tga.c $(DIR_P)/bmp.c $(DIR_P)/gif.c
-CFLAGS=-O3 -W -Wall -lm
-LDFLAGS=
-OS=$(shell uname -s)
-ARCH=$(shell uname -m)
+CC 			 := gcc
+CFLAGS 		 := -W -Wall -O3
+LFLAGS 		 := -lm
+OS 			 := $(shell uname -s)
+ARCH 		 := $(shell uname -m)
+target_file  := loader
+prog_name    := libimage
+dest_dir     := ./src/
+object_files := $(patsubst %.c, %.o, $(wildcard $(dest_dir)*.c))
 
 ifeq ($(OS),Linux)
-	LDFLAGS+=-fPIC
-	LIB=$(PROG).so
-	CFLAGS+=--def export.def -s -fPIC -shared -g
+	lib_name := $(prog_name).so
+	LFLAGS += --def export.def -s -fPIC -shared
 else
-	LIB=$(PROG).dll
-	CFLAGS+=-shared -Wl,-add-stdcall-alias export.def
+	lib_name := $(prog_name).dll
+	LFLAGS += -shared -Wl,-add-stdcall-alias export.def
 endif
 
-OBJS := $(patsubst %.c, %.o, $(SOURCES))
-DEPS := $(patsubst %.o, %.d, $(OBJS))
+all: $(dest_dir)$(target_file)
 
-$(LIB): $(OBJS) $(DEPS)
-	$(CC) $(OBJS) -o $@ $(CFLAGS)
-	strip -s $(LIB)
-	chmod -x $(LIB)
-	cp $(LIB) test/
- 
-%.o: %.c %.d
-	$(CC) $(LDFLAGS) -c $< -o $@
- 
-%.d: %.c
-	@set -e; $(CC) -M $< | \
-		sed -e 's%\($*\)\.o[ :]*%\1.o $@ : %g' > $@; \
-		[ -s $@ ] || rm -f $@
-	@echo create $@
-	
+$(dest_dir)$(target_file): $(object_files)
+	$(CC) $(CLFAGS) $(object_files) -o $(lib_name) $(LFLAGS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
-	$(RM) $(LIB) $(OBJS) $(DEPS) *~ test/$(LIB)
- 
--include $(DEPS)
+	-$(RM) $(lib_name) $(object_files)
