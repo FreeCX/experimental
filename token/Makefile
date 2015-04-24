@@ -1,7 +1,7 @@
 PROG=token
 CFLAGS=-Wall -Ofast
 DFLAGS=-debug=0 -release -O -inline -noboundscheck
-RUSTFLAGS=--opt-level 3 --debuginfo 0 -Z no-landing-pads -Z lto
+RUSTFLAGS=-C opt-level=3 -C debuginfo=0 -Z no-landing-pads 
 RUST=rustc
 D=dmd
 all:
