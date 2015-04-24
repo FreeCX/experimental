@@ -251,7 +251,7 @@ void anibase::run_regexp( std::string regexp )
                     if ( counter % 2 == 0 ) {
                         std::cout << "\e[1;37m";
                     } else {
-                        std::cout << "\e[0;34m";
+                        std::cout << "\e[1;35m";
                     }
                     counter++;
 #endif
@@ -477,7 +477,7 @@ void anibase::print_one( print_format_t & fmt, size_t id )
 {
     anime_list_t & a = database[id];
 
-    std::cout << " '" << std::setw( fmt.max_name ) << a.name
+    std::cout << std::setw( fmt.max_name - a.name.length() + 1 ) << "'" << a.name
               << "', status: " << std::setw( fmt.max_status ) << get_status_str( a.status )
               << ", progress: " << std::setw( fmt.max_progress ) << a.progress_cur
               << " / " << std::setw( fmt.max_progress );
