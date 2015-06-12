@@ -1,5 +1,7 @@
 PROG=token
-CFLAGS=-Wall -Ofast
+CC=gcc
+CXX=g++
+CFLAGS=-Wall -O3
 DFLAGS=-debug=0 -release -O -inline -noboundscheck
 RUSTFLAGS=-C opt-level=3 -C debuginfo=0 -Z no-landing-pads 
 RUST=rustc
