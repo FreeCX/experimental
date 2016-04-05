@@ -12,8 +12,7 @@ const char menu_info[] =
     " 0 -- выход\n"
     "> select: ";
 
-int main( int argc, char * argv[] )
-{
+int main( int argc, char * argv[] ) {
     int status = 0, select;
     std::string buffer;
     anibase data;

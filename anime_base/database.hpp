@@ -9,6 +9,7 @@
 #include <regex>
 #include <string>
 #include <vector>
+#include <sys/ioctl.h>
 
 typedef std::vector< std::string > token_t;
 
@@ -43,6 +44,7 @@ enum {
 
 class anibase {
 public:
+    anibase();
     ~anibase();
     bool read_database( std::string filename );
     void read_xml( std::string xml );
@@ -70,6 +72,7 @@ private:
     print_format_t null_format, format;
     std::string file_name;
     token_t token;
+    uint8_t term_size;
 };
 
 #endif

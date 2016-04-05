@@ -38,6 +38,12 @@ const char regexp_info[] =
     " w        -- записать изменения в базу\n"
     ">> example: f/\"D.Gray-man\"/+/-/s7/p23/sc/n/d.gray-man/w";
 
+anibase::anibase() {
+    struct winsize w;
+    ioctl( 0, TIOCGWINSZ, &w );
+    term_size = w.ws_col;
+}
+
 bool anibase::read_database( std::string filename )
 {
     std::string delimeters = " /";
@@ -166,7 +172,7 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
                 std::cout << ">> append:";
 #else
-                std::cout << "\e[0;34m>> append:\e[0m";
+                std::cout << "\e[1;32m>> append:\e[0m";
 #endif
                 print_one( format, get_size() );
                 update++;
@@ -196,11 +202,11 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
                     std::cout << ">>  found:";
 #else
-                    std::cout << "\e[0;37m>>  found:\e[0m";
+                    std::cout << "\e[0;38m>>  found:\e[0m";
                     if ( counter % 2 == 0 ) {
-                        std::cout << "\e[1;37m";
+                        std::cout << "\e[1;38m";
                     } else {
-                        std::cout << "\e[0;34m";
+                        std::cout << "\e[1;33m";
                     }
                     counter++;
 #endif
@@ -247,11 +253,11 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
                     std::cout << ">>  found:";
 #else
-                    std::cout << "\e[0;37m>>  found:\e[0m";
+                    std::cout << "\e[0;38m>>  found:\e[0m";
                     if ( counter % 2 == 0 ) {
-                        std::cout << "\e[1;37m";
+                        std::cout << "\e[1;38m";
                     } else {
-                        std::cout << "\e[1;35m";
+                        std::cout << "\e[1;32m";
                     }
                     counter++;
 #endif
@@ -308,7 +314,7 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
                 std::cout << ">> xml loaded" << std::endl;
 #else
-                std::cout << "\e[0;37m>> xml loaded\e[0m" << std::endl;
+                std::cout << "\e[0;38m>> xml loaded\e[0m" << std::endl;
 #endif
                 break;
             case 'm':
@@ -370,7 +376,7 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
         std::cout << ">> record not found" << std::endl;
 #else
-        std::cout << "\e[0;37m>> record not found\e[0m" << std::endl;
+        std::cout << "\e[0;38m>> record not found\e[0m" << std::endl;
 #endif
     }
     if ( changed.size() > 0 ) {
@@ -382,9 +388,9 @@ void anibase::run_regexp( std::string regexp )
 #else
             std::cout << "\e[0;32m>> change:\e[0m";
             if ( counter % 2 == 0 ) {
-                std::cout << "\e[1;37m";
+                std::cout << "\e[1;38m";
             } else {
-                std::cout << "\e[0;34m";
+                std::cout << "\e[1;32m";
             }
             counter++;
 #endif
@@ -395,7 +401,7 @@ void anibase::run_regexp( std::string regexp )
 #ifdef _WIN32
         std::cout << ">> change saved!" << std::endl;
 #else
-        std::cout << "\e[0;34m>> change saved!\e[0m" << std::endl;
+        std::cout << "\e[1;38m>> change saved!\e[0m" << std::endl;
 #endif
         id.clear();
     }
@@ -476,8 +482,10 @@ void anibase::update_print_format( print_format_t & fmt, anime_list_t & a )
 void anibase::print_one( print_format_t & fmt, size_t id )
 {
     anime_list_t & a = database[id];
+    int text_size = term_size - ( fmt.max_score + fmt.id_size + 2 * fmt.max_progress +
+        fmt.max_status + 57 );
 
-    std::cout << std::setw( fmt.max_name - a.name.length() + 1 ) << "'" << a.name
+    std::cout << std::setw( text_size - a.name.length() + 1 ) << "'" << a.name.substr( 0, abs( text_size ) )
               << "', status: " << std::setw( fmt.max_status ) << get_status_str( a.status )
               << ", progress: " << std::setw( fmt.max_progress ) << a.progress_cur
               << " / " << std::setw( fmt.max_progress );
@@ -499,9 +507,9 @@ void anibase::print_database( void )
 {
     for ( size_t i = 0; i < database.size(); i++ ) {
         if ( i % 2 == 0 ) {
-            std::cout << "\e[1;37m";
+            std::cout << "\e[1;38m";
         } else {
-            std::cout << "\e[0;34m";
+            std::cout << "\e[1;32m";
         }
         print_one( format, i );
     }

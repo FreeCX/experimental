@@ -66,23 +66,27 @@ void program_init( void )
 void program_render( void )
 {
     const int divider = 8;
-    const GLfloat A = 15.0f;
+    const GLfloat angle = 180.0f / divider;
+    const GLuint iterations = 300;
+    const GLfloat A = 18.0f;
+    const GLfloat B = 1.8f;
+    const GLfloat R = 1.0f;
     static GLfloat dt = 0.0f;
     int k;
 
     dt = dt == M_PI ? 0 : dt;
     glClear( GL_COLOR_BUFFER_BIT );
     glAccum( GL_LOAD, 1.0f );
-    for ( int i = 0; i < 500; i++ ) {
+    for ( GLuint i = 0; i < iterations; i++ ) {
         k = divider;
         glLoadIdentity();
         glColor3f( 0.8f, 0.6f, 0.0f );
         do {
             glColor3fv( &cv[3*(k-1)+0] );
-            spDrawCircle3f( 0.0f, A*(sin(dt+k)+2), i / 3000.0f + 1.0f );
+            spDrawCircle3f( 0.0f, A*(sin(dt+k)+B), i / 3000.0f + R );
             glColor3fv( &cv[3*(k-1)+24] );
-            spDrawCircle3f( 0.0f, A*(sin(dt+k)-2), i / 3000.0f + 1.0f );
-            glRotatef( -22.5f, 0.0f, 0.0f, 1.0f );
+            spDrawCircle3f( 0.0f, A*(sin(dt+k)-B), i / 3000.0f + R );
+            glRotatef( -angle, 0.0f, 0.0f, 1.0f );
         } while ( --k );
         dt += 0.0002f;
         glAccum( GL_ACCUM, 1.0f / i );

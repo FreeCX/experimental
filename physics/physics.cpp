@@ -9,10 +9,9 @@ int win_id = 0;
 GLfloat n = 60.0f;
 GLfloat aspect;
 
-simulator lab( 500, 12, 2.0f, 50.0f, 50.0f );
+simulator lab( 500, 12, 2.0f, 55.0f, 55.0f );
 
-void program_init( void )
-{
+void program_init( void ) {
     GLint sw = glutGet( GLUT_SCREEN_WIDTH );
     GLint sh = glutGet( GLUT_SCREEN_HEIGHT );
     glutPositionWindow( ( sw - w_width ) / 2, ( sh - w_height) / 2 );
@@ -22,25 +21,25 @@ void program_init( void )
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+    lab.add_line( vector2( +55.0f, -55.0f ), vector2( +55.0f, +55.0f ) );
+    lab.add_line( vector2( -55.0f, -55.0f ), vector2( -55.0f, +55.0f ) );
+    lab.add_line( vector2( -55.0f, -55.0f ), vector2( +55.0f, -55.0f ) );
 }
 
-void program_render( void )
-{
+void program_render( void ) {
     glClear( GL_COLOR_BUFFER_BIT );
     glColor3f( 1.0f, 1.0f, 1.0f );
     lab.draw();
     glutSwapBuffers();
 }
 
-void program_redraw( int value )
-{
+void program_redraw( int value ) {
     lab.step( 1.0f / 30.0f );
     program_render();
     glutTimerFunc( 30, program_redraw, 0 );
 }
 
-void program_resize( int width, int height )
-{
+void program_resize( int width, int height ) {
     aspect = (float) width / height;
     glViewport( 0, 0, width, height );
     glMatrixMode( GL_PROJECTION );
@@ -53,8 +52,8 @@ void program_resize( int width, int height )
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 }
-void program_keyboard( unsigned char key, int x, int y )
-{
+
+void program_keyboard( unsigned char key, int x, int y ) {
     static int fullscreen = 1;
     if ( key == 'q' ) {
         glutDestroyWindow( win_id );
@@ -68,12 +67,10 @@ void program_keyboard( unsigned char key, int x, int y )
     }
 }
 
-void program_free( void )
-{
+void program_free( void ) {
 }
 
-int main( int argc, char *argv[] )
-{
+int main( int argc, char *argv[] ) {
     glutInit( &argc, argv );
     glutInitWindowSize( w_width, w_height );
     glutInitWindowPosition( 0, 0 );
