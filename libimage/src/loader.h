@@ -2,18 +2,18 @@
 #define __LOADER_H__
 
 #include "bmp.h"
+#include "error.h"
+#include "gif.h"
 #include "pcx.h"
 #include "tga.h"
-#include "gif.h"
-#include "error.h"
 
-extern uint8 __DEBUG_FLAG__;
+extern uint8_t __DEBUG_FLAG__;
 
-void img_info( void );
-void img_version( uint8 *major, uint8 *minor );
-void img_debug( uint8 param );
-int8 img_null( FILE *f, image_t *h );
-uint8 img_load( char *filename, image_t *img );
-uint8 img_close( image_t *img );
+void img_info(void);
+void img_version(uint8_t *major, uint8_t *minor);
+void img_debug(uint8_t param);
+int8_t img_null(FILE *f, image_t *h);
+uint8_t img_load(char *filename, image_t *img);
+uint8_t img_close(image_t *img);
 
 #endif

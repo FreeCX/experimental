@@ -1,5 +1,5 @@
 CC 			 := gcc
-CFLAGS 		 := -W -Wall -O3
+CFLAGS 		 := -W -Wall -O2 -fPIC
 LFLAGS 		 := -lm
 OS 			 := $(shell uname -s)
 ARCH 		 := $(shell uname -m)
